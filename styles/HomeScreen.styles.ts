@@ -1,131 +1,95 @@
-// screens/styles/HomeScreen.styles.ts
-import { StyleSheet, Dimensions } from "react-native";
+import { StyleSheet } from "react-native";
 
-const { width } = Dimensions.get("window");
-
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#0A0A0F",
+        padding: 16,
     },
-
-    // Top Navigation
-    topNav: {
-        height: 60,
+    themeToggle: {
         flexDirection: "row",
+        justifyContent: "flex-end",
         alignItems: "center",
-        justifyContent: "space-between",
-        paddingHorizontal: 16,
-        backgroundColor: "rgba(10,10,15,0.8)",
-        borderBottomColor: "#7A5CFF",
-        borderBottomWidth: 0.5,
-        zIndex: 10,
+        marginBottom: 20,
     },
-    logo: { fontSize: 22, color: "#FF29B2", fontWeight: "700" },
-    navIcon: { fontSize: 24, color: "#00D1FF" },
-
-    // Stories
-    storiesContainer: {
-        height: 90,
-        flexDirection: "row",
-        paddingHorizontal: 12,
-        marginTop: 8,
-    },
-    storyCircle: {
-        width: 64,
-        height: 64,
-        borderRadius: 32,
-        borderWidth: 2,
-        borderColor: "#FF29B2",
-        marginRight: 12,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    storyAvatar: { width: 60, height: 60, borderRadius: 30 },
-
-    // Tabs
-    tabsContainer: {
-        flexDirection: "row",
-        justifyContent: "center",
-        marginVertical: 8,
-    },
-    tabText: {
+    toggleText: {
         fontSize: 16,
-        color: "#888",
-        marginHorizontal: 16,
-        fontWeight: "600",
+        marginRight: 8,
     },
-    activeTab: {
-        color: "#FF29B2",
-        textDecorationLine: "underline",
-        textDecorationColor: "#FF29B2",
+    connectedContainer: {
+        marginBottom: 20,
     },
-
-    // Post Card
+    connectedText: {
+        fontSize: 18,
+        fontWeight: "bold",
+        marginBottom: 10,
+    },
+    profileRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+    },
+    profileImage: {
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        borderWidth: 2,
+        borderColor: "#756b72ff", // Border for profile images
+    },
     postCard: {
-        backgroundColor: "rgba(255,255,255,0.05)",
-        marginHorizontal: 12,
-        marginVertical: 8,
         borderRadius: 16,
         overflow: "hidden",
+        padding: 16,
+        marginBottom: 20,
+        borderWidth: 1,
+        borderColor: "#443e3eff", // Border for post cards
     },
     postHeader: {
         flexDirection: "row",
         alignItems: "center",
-        padding: 12,
+        marginBottom: 10,
     },
-    avatar: { width: 40, height: 40, borderRadius: 20, marginRight: 8 },
-    username: { fontSize: 14, fontWeight: "700", color: "#fff" },
-    menu: { fontSize: 20, color: "#888" },
-
-    media: {
-        width: width - 24,
+    username: {
+        fontSize: 16,
+        fontWeight: "bold",
+        marginLeft: 8,
+    },
+    postImage: {
+        width: "100%",
         height: 300,
-        backgroundColor: "#222",
+        marginVertical: 16,
+        borderRadius: 10,
     },
-
-    textPost: { padding: 16 },
-    textCaption: { color: "#fff", fontSize: 16 },
-
-    caption: { color: "#fff", fontSize: 14, marginBottom: 8 },
-
-    actions: {
+    postCaption: {
+        fontSize: 14,
+        lineHeight: 20,
+    },
+    postEngagement: {
         flexDirection: "row",
         justifyContent: "space-between",
-        paddingHorizontal: 14,
-        paddingVertical: 8,
+        marginVertical: 10,
     },
-    actionBtn: { color: "#FF29B2", fontSize: 16 },
-
-    // Bottom Navigation
-    bottomNav: {
-        height: 70,
+    commentSection: {
         flexDirection: "row",
-        justifyContent: "space-around",
         alignItems: "center",
-        backgroundColor: "rgba(10,10,15,0.95)",
-        borderTopWidth: 0.5,
-        borderTopColor: "#7A5CFF",
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        right: 0,
-        zIndex: 20,
     },
-    bottomIcon: { fontSize: 28, color: "#888" },
-    bottomIconActive: { fontSize: 28, color: "#FF29B2" },
-    createBtn: {
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        backgroundColor: "#FF29B2",
-        justifyContent: "center",
+    likeSection: {
+        flexDirection: "row",
         alignItems: "center",
-        marginBottom: 20,
-        shadowColor: "#FF29B2",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.6,
-        shadowRadius: 6,
-        elevation: 10,
+    },
+    engagementText: {
+        fontSize: 14,
+        marginLeft: 5,
+    },
+    likeButton: {
+        alignItems: "center",
+        padding: 10,
+        backgroundColor: "#FF29B2",
+        borderRadius: 30,
+        marginTop: 10,
+    },
+    likeButtonText: {
+        fontSize: 20,
+        color: "#FFF",
     },
 });
+
+export default styles;

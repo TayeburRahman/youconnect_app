@@ -1,197 +1,185 @@
-// screens/HomeScreen.tsx
 import React, { useState } from "react";
 import {
   View,
   Text,
-  FlatList,
   Image,
+  Switch,
+  ScrollView,
   TouchableOpacity,
-  SafeAreaView,
 } from "react-native";
-import { Video, ResizeMode } from "expo-av";
-import { styles } from "../styles/HomeScreen.styles";
+import styles from "../styles/HomeScreen.styles";
+import { Ionicons } from "@expo/vector-icons"; // Importing Ionicons for icons
 
-type Post = {
-  id: string;
-  type: "image" | "video" | "text";
-  username: string;
-  avatar: string;
-  media?: string;
-  caption: string;
-  likes: number;
-  comments: number;
-};
-
-const demoPosts: Post[] = [
-  {
-    id: "1",
-    type: "image",
-    username: "Rayhan",
-    avatar: "https://i.pravatar.cc/150?img=12",
-    media: "https://images.pexels.com/photos/2088171/pexels-photo-2088171.jpeg",
-    caption: "Chilling with the vibes ✨",
-    likes: 2300,
-    comments: 180,
-  },
-  {
-    id: "2",
-    type: "video",
-    username: "Ariana",
-    avatar: "https://i.pravatar.cc/150?img=32",
-    media: "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
-    caption: "Peaceful place 🌿🍃",
-    likes: 1900,
-    comments: 120,
-  },
-  {
-    id: "3",
-    type: "text",
-    username: "Sanjida",
-    avatar: "https://i.pravatar.cc/150?img=45",
-    caption: "Start your day with a grateful heart 🤍",
-    likes: 540,
-    comments: 22,
-  },
-];
-
-const stories = [
-  "https://i.pravatar.cc/150?img=12",
-  "https://i.pravatar.cc/150?img=32",
-  "https://i.pravatar.cc/150?img=45",
-  "https://i.pravatar.cc/150?img=56",
-];
+const placeholderImage = "https://via.placeholder.com/60"; // Placeholder image for profiles
 
 const HomeScreen: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<"ForYou" | "Following">("ForYou");
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
 
-  const renderPost = ({ item }: { item: Post }) => (
-    <View style={styles.postCard}>
-      {/* Header */}
-      <View style={styles.postHeader}>
-        <Image source={{ uri: item.avatar }} style={styles.avatar} />
-        <View style={{ flex: 1 }}>
-          <Text style={styles.username}>{item.username}</Text>
-          <Text style={{ color: "#888", fontSize: 12 }}>2h ago</Text>
-        </View>
-        <Text style={styles.menu}>⋯</Text>
-      </View>
+  const toggleTheme = () => {
+    setIsDarkMode((prevMode) => !prevMode);
+  };
 
-      {/* Media */}
-      {item.type === "image" && (
-        <Image
-          source={{ uri: item.media }}
-          style={styles.media}
-          resizeMode="cover"
-        />
-      )}
-
-      {item.type === "video" && item.media && (
-        <Video
-          source={{ uri: item.media }}
-          style={styles.media}
-          resizeMode={ResizeMode.COVER}
-          shouldPlay={false}
-          isLooping
-        />
-      )}
-
-      {item.type === "text" && (
-        <View style={styles.textPost}>
-          <Text style={styles.textCaption}>{item.caption}</Text>
-        </View>
-      )}
-
-      {/* Caption */}
-      {item.type !== "text" && (
-        <View style={{ paddingHorizontal: 14, paddingTop: 8 }}>
-          <Text style={styles.caption}>{item.caption}</Text>
-        </View>
-      )}
-
-      {/* Actions */}
-      <View style={styles.actions}>
-        <TouchableOpacity>
-          <Text style={styles.actionBtn}>❤️ {item.likes}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={styles.actionBtn}>💬 {item.comments}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={styles.actionBtn}>🔁</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={styles.actionBtn}>📤</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={styles.actionBtn}>🔗</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+  const posts = [
+    {
+      id: 1,
+      username: "party_arty_dk",
+      caption:
+        "Yesterday I've painted this picture to express my gratitude towards people who always like my posts.",
+      imageUri: "https://via.placeholder.com/300", // Placeholder image for posts
+      comments: 20,
+      likes: 300,
+    },
+    {
+      id: 2,
+      username: "john_doe",
+      caption: "Having a great time with friends at the beach!",
+      imageUri: "https://via.placeholder.com/300", // Placeholder image for posts
+      comments: 50,
+      likes: 800,
+    },
+    {
+      id: 3,
+      username: "jane_doe",
+      caption: "Here's a text post just to share some thoughts.",
+      imageUri: "", // No image for text post
+      comments: 10,
+      likes: 150,
+    },
+  ];
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Top Navigation */}
-      <View style={styles.topNav}>
-        <Text style={styles.logo}>NeonApp</Text>
-        <Text style={styles.navIcon}>🔍</Text>
-        <Text style={styles.navIcon}>🛎️</Text>
+    <ScrollView
+      style={[
+        styles.container,
+        { backgroundColor: isDarkMode ? "#0A0A0F" : "#FFFFFF" },
+      ]}
+    >
+      {/* Dark Mode Toggle */}
+      <View style={styles.themeToggle}>
+        <Text
+          style={[styles.toggleText, { color: isDarkMode ? "#FFF" : "#000" }]}
+        >
+          Dark Mode
+        </Text>
+        <Switch value={isDarkMode} onValueChange={toggleTheme} />
       </View>
 
-      {/* Stories */}
-      <FlatList
-        data={stories}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(_, i) => i.toString()}
-        contentContainerStyle={styles.storiesContainer}
-        renderItem={({ item }) => (
-          <View style={styles.storyCircle}>
-            <Image source={{ uri: item }} style={styles.storyAvatar} />
+      {/* Connected Section */}
+      <View style={styles.connectedContainer}>
+        <Text
+          style={[
+            styles.connectedText,
+            { color: isDarkMode ? "#FFF" : "#000" },
+          ]}
+        >
+          Connected
+        </Text>
+        <View style={styles.profileRow}>
+          {/* Display profile images */}
+          <Image
+            source={{ uri: placeholderImage }}
+            style={styles.profileImage}
+          />
+          <Image
+            source={{ uri: placeholderImage }}
+            style={styles.profileImage}
+          />
+          <Image
+            source={{ uri: placeholderImage }}
+            style={styles.profileImage}
+          />
+          <Image
+            source={{ uri: placeholderImage }}
+            style={styles.profileImage}
+          />
+          <Image
+            source={{ uri: placeholderImage }}
+            style={styles.profileImage}
+          />
+        </View>
+      </View>
+
+      {/* Posts */}
+      {posts.map((post) => (
+        <View
+          key={post.id}
+          style={[
+            styles.postCard,
+            { backgroundColor: isDarkMode ? "#333" : "#FFF" },
+          ]}
+        >
+          <View style={styles.postHeader}>
+            <Image
+              source={{ uri: placeholderImage }}
+              style={styles.profileImage}
+            />
+            <Text
+              style={[styles.username, { color: isDarkMode ? "#FFF" : "#000" }]}
+            >
+              {post.username}
+            </Text>
           </View>
-        )}
-      />
 
-      {/* Tabs */}
-      <View style={styles.tabsContainer}>
-        <TouchableOpacity onPress={() => setActiveTab("ForYou")}>
-          <Text
-            style={[styles.tabText, activeTab === "ForYou" && styles.activeTab]}
-          >
-            For You
-          </Text>
-        </TouchableOpacity>
+          {/* Post Image */}
+          {post.imageUri ? (
+            <Image source={{ uri: post.imageUri }} style={styles.postImage} />
+          ) : (
+            <Text
+              style={[
+                styles.postCaption,
+                { color: isDarkMode ? "#FFF" : "#000" },
+              ]}
+            >
+              {post.caption}
+            </Text>
+          )}
 
-        <TouchableOpacity onPress={() => setActiveTab("Following")}>
+          {/* Caption Text */}
           <Text
             style={[
-              styles.tabText,
-              activeTab === "Following" && styles.activeTab,
+              styles.postCaption,
+              { color: isDarkMode ? "#FFF" : "#000" },
             ]}
           >
-            Following
+            {post.caption}
           </Text>
-        </TouchableOpacity>
-      </View>
 
-      {/* Feed */}
-      <FlatList
-        data={demoPosts}
-        keyExtractor={(item) => item.id}
-        renderItem={renderPost}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 90 }}
-      />
-
-      {/* Bottom Navigation */}
-      <View style={styles.bottomNav}>
-        <Text style={styles.bottomIconActive}>🏠</Text>
-        <Text style={styles.bottomIcon}>🔍</Text>
-        <Text style={styles.bottomIcon}>➕</Text>
-        <Text style={styles.bottomIcon}>🎬</Text>
-        <Text style={styles.bottomIcon}>👤</Text>
-      </View>
-    </SafeAreaView>
+          {/* Engagement Section: Comments, Likes */}
+          <View style={styles.postEngagement}>
+            <View style={styles.commentSection}>
+              <Ionicons
+                name="chatbubble-outline"
+                size={20}
+                color={isDarkMode ? "#FFF" : "#000"}
+              />
+              <Text
+                style={[
+                  styles.engagementText,
+                  { color: isDarkMode ? "#FFF" : "#000" },
+                ]}
+              >
+                {post.comments} comments
+              </Text>
+            </View>
+            <View style={styles.likeSection}>
+              <Text
+                style={[
+                  styles.engagementText,
+                  { color: isDarkMode ? "#FFF" : "#000" },
+                ]}
+              >
+                You & {post.likes} others
+              </Text>
+              <Ionicons
+                name="heart"
+                size={20}
+                color="#FF29B2" // Pink color for the heart button
+              />
+            </View>
+          </View>
+        </View>
+      ))}
+    </ScrollView>
   );
 };
 
