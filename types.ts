@@ -1,8 +1,13 @@
 export type RootStackParamList = {
     Login: undefined;
     Register: undefined;
+    MainTabNavigator: undefined; // New: This will be our BottomTabNavigator
+};
+
+export type RootTabParamList = {
     Home: undefined;
-    CreatePost: undefined; // Add CreatePost route
+    CreatePost: undefined;
+    // Add other screens you want in the bottom tab here
 };
 
 // Existing form props

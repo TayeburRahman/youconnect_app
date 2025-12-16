@@ -1,22 +1,17 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { BottomTabBarProps } from "@react-navigation/bottom-tabs"; // Import BottomTabBarProps
 import { useTheme } from "../contexts/ThemeContext";
 
-interface BottomTabProps {
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
-}
-
-const tabItems = [
-  { name: "Home", icon: "home", iconOutline: "home-outline" },
-  { name: "Search", icon: "search", iconOutline: "search-outline" },
-  { name: "Create", icon: "add-circle", iconOutline: "add-circle-outline" },
-  { name: "Profile", icon: "person", iconOutline: "person-outline" },
-];
-
-const BottomTab: React.FC<BottomTabProps> = ({ activeTab, setActiveTab }) => {
+const BottomTab: React.FC<BottomTabBarProps> = ({ state, descriptors, navigation }) => {
   const { isDarkMode } = useTheme();
+
+  const tabItems = [
+    { name: "Home", icon: "home", iconOutline: "home-outline", label: "Home" },
+    { name: "CreatePost", icon: "add-circle", iconOutline: "add-circle-outline", label: "Create" },
+    // Add other tab items here as needed
+  ];
 
   return (
     <View
@@ -28,43 +23,74 @@ const BottomTab: React.FC<BottomTabProps> = ({ activeTab, setActiveTab }) => {
         },
       ]}
     >
-      {tabItems.map((tab) => (
-        <TouchableOpacity
-          key={tab.name}
-          onPress={() => setActiveTab(tab.name)}
-          style={styles.tab}
-        >
-          <Ionicons
-            name={
-              activeTab === tab.name
-                ? (tab.icon as any)
-                : (tab.iconOutline as any)
-            }
-            size={26}
-            color={
-              activeTab === tab.name
-                ? "#FF29B2"
-                : isDarkMode
-                ? "#8E8E93"
-                : "#8E8E93"
-            }
-          />
-          <Text
-            style={{
-              color:
-                activeTab === tab.name
+      {state.routes.map((route, index) => {
+        const { options } = descriptors[route.key];
+        const isFocused = state.index === index;
+
+        const tabItem = tabItems.find(item => item.name === route.name);
+
+        const onPress = () => {
+          const event = navigation.emit({
+            type: 'tabPress',
+            target: route.key,
+            canPreventDefault: true,
+          });
+
+          if (!isFocused && !event.defaultPrevented) {
+            navigation.navigate(route.name);
+          }
+        };
+
+        const onLongPress = () => {
+          navigation.emit({
+            type: 'tabLongPress',
+            target: route.key,
+          });
+        };
+
+        return (
+          <TouchableOpacity
+            key={route.key}
+            accessibilityRole="button"
+            accessibilityState={isFocused ? { selected: true } : {}}
+            accessibilityLabel={options.tabBarAccessibilityLabel}
+            testID={options.tabBarTestID}
+            onPress={onPress}
+            onLongPress={onLongPress}
+            style={styles.tab}
+          >
+            <Ionicons
+              name={
+                isFocused
+                  ? (tabItem?.icon as any) || (options.tabBarIcon as any) || 'help-circle'
+                  : (tabItem?.iconOutline as any) || (options.tabBarIcon as any) || 'help-circle-outline'
+              }
+              size={26}
+              color={
+                isFocused
                   ? "#FF29B2"
                   : isDarkMode
                   ? "#8E8E93"
-                  : "#8E8E93",
-              fontSize: 10,
-              marginTop: 2,
-            }}
-          >
-            {tab.name}
-          </Text>
-        </TouchableOpacity>
-      ))}
+                  : "#8E8E93"
+              }
+            />
+            <Text
+              style={{
+                color:
+                  isFocused
+                    ? "#FF29B2"
+                    : isDarkMode
+                    ? "#8E8E93"
+                    : "#8E8E93",
+                fontSize: 10,
+                marginTop: 2,
+              }}
+            >
+              {tabItem?.label || route.name}
+            </Text>
+          </TouchableOpacity>
+        );
+      })}
     </View>
   );
 };
@@ -86,6 +112,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10, // For notch space
   },
   tab: {
+    flex: 1, // Distribute space evenly
     alignItems: "center",
     justifyContent: "center",
   },
