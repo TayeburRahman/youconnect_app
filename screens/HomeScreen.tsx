@@ -1,50 +1,50 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   Image,
-  ScrollView,
+  FlatList, // Import FlatList
   TouchableOpacity,
 } from "react-native";
 import styles from "../styles/HomeScreen.styles";
-import { Ionicons } from "@expo/vector-icons"; // Importing Ionicons for icons
+import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../contexts/ThemeContext";
+import PostCard from "../components/PostCard"; // Import PostCard
+import { PostItem, User } from "../types"; // Import PostItem type
+
+// Mock Data
+import demoPostData from '../demo_createpost_data.json'; // Import mock data
 
 const placeholderImage = "https://via.placeholder.com/60"; // Placeholder image for profiles
 
+// Extended MOCK_FRIENDS to include in demo data
+const MOCK_HOMESCREEN_FRIENDS: User[] = [
+    { id: "1", name: "John Doe", avatar: "https://i.pravatar.cc/150?img=11" },
+    { id: "2", name: "Jane Smith", avatar: "https://i.pravatar.cc/150?img=12" },
+    { id: "3", name: "Peter Jones", avatar: "https://i.pravatar.cc/150?img=13" },
+    { id: "4", name: "Liam Williams", avatar: "https://i.pravatar.cc/150?img=14" },
+    { id: "5", name: "Olivia Brown", avatar: "https://i.pravatar.cc/150?img=15" },
+    { id: "6", name: "Ethan Green", avatar: "https://i.pravatar.cc/150?img=16" },
+    { id: "7", name: "Sophia White", avatar: "https://i.pravatar.cc/150?img=17" },
+];
+
+
 const HomeScreen: React.FC = () => {
   const { isDarkMode } = useTheme();
+  const [posts, setPosts] = useState<PostItem[]>([]);
 
-  const posts = [
-    {
-      id: 1,
-      username: "party_arty_dk",
-      caption:
-        "Yesterday I've painted this picture to express my gratitude towards people who always like my posts.",
-      imageUri: "https://via.placeholder.com/300", // Placeholder image for posts
-      comments: 20,
-      likes: 300,
-    },
-    {
-      id: 2,
-      username: "john_doe",
-      caption: "Having a great time with friends at the beach!",
-      imageUri: "https://via.placeholder.com/300", // Placeholder image for posts
-      comments: 50,
-      likes: 800,
-    },
-    {
-      id: 3,
-      username: "jane_doe",
-      caption: "Here's a text post just to share some thoughts.",
-      imageUri: "", // No image for text post
-      comments: 10,
-      likes: 150,
-    },
-  ];
+  useEffect(() => {
+    // In a real app, you would fetch this data from an API
+    setPosts(demoPostData as PostItem[]);
+  }, []);
+
+
+  const renderPostItem = ({ item }: { item: PostItem }) => (
+    <PostCard post={item} isDarkMode={isDarkMode} />
+  );
 
   return (
-    <ScrollView
+    <View // Changed from ScrollView to View as FlatList handles scrolling
       style={[
         styles.container,
         { backgroundColor: isDarkMode ? "#0A0A0F" : "#FFFFFF" },
@@ -60,112 +60,33 @@ const HomeScreen: React.FC = () => {
         >
           Connected
         </Text>
-        <View style={styles.profileRow}>
-          {/* Display profile images */}
-          <Image
-            source={{ uri: placeholderImage }}
-            style={styles.profileImage}
-          />
-          <Image
-            source={{ uri: placeholderImage }}
-            style={styles.profileImage}
-          />
-          <Image
-            source={{ uri: placeholderImage }}
-            style={styles.profileImage}
-          />
-          <Image
-            source={{ uri: placeholderImage }}
-            style={styles.profileImage}
-          />
-          <Image
-            source={{ uri: placeholderImage }}
-            style={styles.profileImage}
-          />
-        </View>
+        <FlatList
+            data={MOCK_HOMESCREEN_FRIENDS}
+            keyExtractor={(item) => item.id}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            renderItem={({ item }) => (
+                <View style={{ alignItems: 'center', marginRight: 15 }}>
+                    <Image
+                        source={{ uri: item.avatar }}
+                        style={styles.profileImage}
+                    />
+                    <Text style={{ color: isDarkMode ? '#FFF' : '#000', fontSize: 12, marginTop: 5 }}>
+                        {item.name.split(' ')[0]}
+                    </Text>
+                </View>
+            )}
+        />
       </View>
 
       {/* Posts */}
-      {posts.map((post) => (
-        <View
-          key={post.id}
-          style={[
-            styles.postCard,
-            { backgroundColor: isDarkMode ? "#333" : "#FFF" },
-          ]}
-        >
-          <View style={styles.postHeader}>
-            <Image
-              source={{ uri: placeholderImage }}
-              style={styles.profileImage}
-            />
-            <Text
-              style={[styles.username, { color: isDarkMode ? "#FFF" : "#000" }]}
-            >
-              {post.username}
-            </Text>
-          </View>
-
-          {/* Post Image */}
-          {post.imageUri ? (
-            <Image source={{ uri: post.imageUri }} style={styles.postImage} />
-          ) : (
-            <Text
-              style={[
-                styles.postCaption,
-                { color: isDarkMode ? "#FFF" : "#000" },
-              ]}
-            >
-              {post.caption}
-            </Text>
-          )}
-
-          {/* Caption Text */}
-          <Text
-            style={[
-              styles.postCaption,
-              { color: isDarkMode ? "#FFF" : "#000" },
-            ]}
-          >
-            {post.caption}
-          </Text>
-
-          {/* Engagement Section: Comments, Likes */}
-          <View style={styles.postEngagement}>
-            <View style={styles.commentSection}>
-              <Ionicons
-                name="chatbubble-outline"
-                size={20}
-                color={isDarkMode ? "#FFF" : "#000"}
-              />
-              <Text
-                style={[
-                  styles.engagementText,
-                  { color: isDarkMode ? "#FFF" : "#000" },
-                ]}
-              >
-                {post.comments} comments
-              </Text>
-            </View>
-            <View style={styles.likeSection}>
-              <Text
-                style={[
-                  styles.engagementText,
-                  { color: isDarkMode ? "#FFF" : "#000" },
-                ]}
-              >
-                You & {post.likes} others
-              </Text>
-              <Ionicons
-                name="heart"
-                size={20}
-                color="#FF29B2" // Pink color for the heart button
-              />
-            </View>
-          </View>
-        </View>
-      ))}
-    </ScrollView>
+      <FlatList
+        data={posts}
+        keyExtractor={(item) => item.id}
+        renderItem={renderPostItem}
+        contentContainerStyle={styles.postListContainer} // Add style for FlatList content
+      />
+    </View>
   );
 };
 

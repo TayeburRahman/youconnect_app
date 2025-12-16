@@ -8,7 +8,6 @@ import {
   ScrollView,
   Modal,
   FlatList,
-  SafeAreaView,
   TouchableWithoutFeedback,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -187,27 +186,30 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onClose }) => {
     setDatePickerVisible(true);
   };
 
-  const setQuickDateTime = useCallback((option: "now" | "hour" | "tomorrow" | "week") => {
-    const now = new Date();
-    let newDate = new Date(now);
-    switch (option) {
-      case "now":
-        // newDate is already now
-        break;
-      case "hour":
-        newDate.setHours(now.getHours() + 1);
-        break;
-      case "tomorrow":
-        newDate.setDate(now.getDate() + 1);
-        newDate.setHours(9, 0, 0, 0); // Default to 9:00 AM
-        break;
-      case "week":
-        newDate.setDate(now.getDate() + 7);
-        newDate.setHours(9, 0, 0, 0); // Default to 9:00 AM next week
-        break;
-    }
-    setTempDate(newDate.toLocaleString());
-  }, []); // Empty dependency array because setTempDate is a state setter
+  const setQuickDateTime = useCallback(
+    (option: "now" | "hour" | "tomorrow" | "week") => {
+      const now = new Date();
+      let newDate = new Date(now);
+      switch (option) {
+        case "now":
+          // newDate is already now
+          break;
+        case "hour":
+          newDate.setHours(now.getHours() + 1);
+          break;
+        case "tomorrow":
+          newDate.setDate(now.getDate() + 1);
+          newDate.setHours(9, 0, 0, 0); // Default to 9:00 AM
+          break;
+        case "week":
+          newDate.setDate(now.getDate() + 7);
+          newDate.setHours(9, 0, 0, 0); // Default to 9:00 AM next week
+          break;
+      }
+      setTempDate(newDate.toLocaleString());
+    },
+    []
+  ); // Empty dependency array because setTempDate is a state setter
 
   const resetForm = useCallback(() => {
     setPostContent("");
@@ -241,32 +243,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onClose }) => {
   });
 
   return (
-    <SafeAreaView
-      style={[
-        styles.container,
-        { backgroundColor: isDarkMode ? "#000" : "#F0F2F5" },
-      ]}
-    >
-      {/* Header */}
-      <View
-        style={[
-          styles.header,
-          { borderBottomColor: isDarkMode ? "#333" : "#DDD" },
-        ]}
-      >
-        <Text
-          style={[styles.headerTitle, { color: isDarkMode ? "#FFF" : "#000" }]}
-        >
-          Create
-        </Text>
-        <TouchableOpacity onPress={onClose}>
-          <Ionicons
-            name="close"
-            size={28}
-            color={isDarkMode ? "#FFF" : "#000"}
-          />
-        </TouchableOpacity>
-      </View>
+    <View> {/* Removed SafeAreaView and Header section */}
 
       {/* Post Type Selector */}
       <View style={styles.postTypeContainer}>
@@ -776,7 +753,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onClose }) => {
           />
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 

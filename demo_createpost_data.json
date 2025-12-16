@@ -1,0 +1,106 @@
+[
+  {
+    "postType": "Post",
+    "selectedVisibility": "Public",
+    "postContent": "Enjoying a beautiful sunset today! #sunset #goodvibes",
+    "postImages": [
+      "https://example.com/images/sunset1.jpg",
+      "https://example.com/images/sunset2.jpg"
+    ],
+    "selectedFeeling": {
+      "icon": "😊",
+      "name": "Happy"
+    },
+    "taggedFriends": [
+      { "id": "1", "name": "John Doe", "avatar": "https://i.pravatar.cc/150?img=11" },
+      { "id": "2", "name": "Jane Smith", "avatar": "https://i.pravatar.cc/150?img=12" }
+    ],
+    "selectedLocation": "Santa Monica Beach, CA"
+  },
+  {
+    "postType": "Post",
+    "selectedVisibility": "Friends",
+    "postContent": "Having a great time at the new cafe downtown! Highly recommend their latte. #coffeeshop #friends",
+    "postImages": [
+      "https://example.com/images/latte.jpg"
+    ],
+    "selectedFeeling": {
+      "icon": "☕",
+      "name": "Relaxed"
+    },
+    "taggedFriends": [
+      { "id": "3", "name": "Peter Jones", "avatar": "https://i.pravatar.cc/150?img=13" }
+    ],
+    "selectedLocation": "The Daily Grind, Downtown"
+  },
+  {
+    "postType": "Event",
+    "selectedVisibility": "Friends",
+    "eventName": "React Native Workshop",
+    "eventStartDate": "12/25/2025 10:00 AM",
+    "eventEndDate": "12/25/2025 01:00 PM",
+    "eventDescription": "A hands-on workshop to learn the basics of React Native development.",
+    "coverImage": "https://example.com/images/rn_workshop.jpg",
+    "selectedLocation": "Tech Hub, Silicon Valley"
+  },
+  {
+    "postType": "Event",
+    "selectedVisibility": "Public",
+    "eventName": "Local Music Festival",
+    "eventStartDate": "01/15/2026 03:00 PM",
+    "eventEndDate": "01/16/2026 11:00 PM",
+    "eventDescription": "Join us for a weekend of live music, food trucks, and good vibes! Featuring local artists.",
+    "coverImage": "https://example.com/images/music_fest.jpg",
+    "selectedLocation": "City Park Amphitheater"
+  },
+  {
+    "postType": "Activity",
+    "selectedVisibility": "Public",
+    "selectedActivity": {
+      "name": "Creating art",
+      "icon": "brush"
+    },
+    "artistCredit": "Artwork by Jane Smith",
+    "postContent": "Just finished this piece! Let me know what you think. #digitalart #painting",
+    "postImages": [
+      "https://example.com/images/my_artwork.jpg"
+    ],
+    "taggedFriends": [],
+    "selectedLocation": null,
+    "selectedFeeling": {
+      "icon": "🎨",
+      "name": "Creative"
+    }
+  },
+  {
+    "postType": "Activity",
+    "selectedVisibility": "Friends",
+    "selectedActivity": {
+      "name": "Working out",
+      "icon": "barbell"
+    },
+    "artistCredit": null,
+    "postContent": "Crushed my morning workout! Feeling strong and ready for the day. 💪 #fitness #gymlife",
+    "postImages": [],
+    "taggedFriends": [
+      { "id": "4", "name": "Liam Williams", "avatar": "https://i.pravatar.cc/150?img=14" }
+    ],
+    "selectedLocation": "Local Gym",
+    "selectedFeeling": {
+      "icon": "💪",
+      "name": "Strong"
+    }
+  },
+  {
+    "postType": "Story",
+    "selectedVisibility": "Public",
+    "storyText": "Morning coffee vibes! ☕",
+    "storyImage": "https://example.com/images/coffee_story.jpg"
+  },
+  {
+    "postType": "Story",
+    "selectedVisibility": "Only Me",
+    "storyText": "Throwback to last summer's adventure! Missing these views. 🏞️",
+    "storyImage": "https://example.com/images/summer_adventure.jpg"
+  }
+]

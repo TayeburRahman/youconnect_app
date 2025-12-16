@@ -5,18 +5,19 @@ export type RootStackParamList = {
     CreatePost: undefined; // Add CreatePost route
 };
 
+// Existing form props
 export interface PostFormProps {
   isDarkMode: boolean;
   postContent: string;
   setPostContent: (text: string) => void;
-  postImages: any[]; // Adjust type if you have a more specific image asset type
+  postImages: Image[];
   handleImageSelect: (isSingle: boolean) => Promise<void>;
   removeImage: (index: number) => void;
   openImageViewer: (uri: string) => void;
   openTagModal: () => void;
-  selectedFeeling: any; // Adjust type if you have a specific feeling object type
+  selectedFeeling: Feeling | null;
   setFeelingModalVisible: (visible: boolean) => void;
-  taggedFriends: any[]; // Adjust type if you have a specific friend object type
+  taggedFriends: User[];
   selectedLocation: string | null;
   setLocationModalVisible: (visible: boolean) => void;
 }
@@ -25,7 +26,7 @@ export interface StoryFormProps {
   isDarkMode: boolean;
   postContent: string;
   setPostContent: (text: string) => void;
-  postImages: any[]; // Adjust type if you have a more specific image asset type
+  postImages: Image[];
   handleImageSelect: (isSingle: boolean) => Promise<void>;
 }
 
@@ -33,20 +34,20 @@ export interface ActivityFormProps {
     isDarkMode: boolean;
     postContent: string;
     setPostContent: (text: string) => void;
-    postImages: any[]; // Adjust type if you have a more specific image asset type
+    postImages: Image[];
     handleImageSelect: (isSingle: boolean) => Promise<void>;
     removeImage: (index: number) => void;
     openImageViewer: (uri: string) => void;
-    selectedActivity: any; // Adjust type if you have a specific activity object type
+    selectedActivity: ActivityType | null;
     setActivityModalVisible: (visible: boolean) => void;
     artistCredit: string;
     setArtistCredit: (text: string) => void;
     openTagModal: () => void;
-    taggedFriends: any[]; // Adjust type if you have a specific friend object type
+    taggedFriends: User[];
     selectedLocation: string | null;
     setLocationModalVisible: (visible: boolean) => void;
     setFeelingModalVisible: (visible: boolean) => void;
-    selectedFeeling: any; // Adjust type if you have a specific feeling object type
+    selectedFeeling: Feeling | null;
 }
 
 export interface EventFormProps {
@@ -58,11 +59,11 @@ export interface EventFormProps {
   eventStartDate: string;
   showDatePicker: (isStart: boolean) => void;
   eventEndDate: string;
-  postImages: any[]; // Adjust type if you have a more specific image asset type
+  postImages: Image[];
   handleImageSelect: (isSingle: boolean) => Promise<void>;
   selectedLocation: string | null;
   setLocationModalVisible: (visible: boolean) => void;
-  setPostImages: (images: any[]) => void;
+  setPostImages: (images: Image[]) => void;
 }
 
 export interface CreatePostFormProps {
@@ -72,15 +73,111 @@ export interface CreatePostFormProps {
 export interface UsePostHandlerProps {
   postType: string;
   postContent: string;
-  postImages: any[];
-  taggedFriends: any[];
+  postImages: Image[];
+  taggedFriends: User[];
   selectedLocation: string | null;
   selectedVisibility: string;
   eventName: string;
   eventStartDate: string;
   eventEndDate: string;
-  selectedActivity: any;
+  selectedActivity: ActivityType | null;
   artistCredit: string;
-  selectedFeeling: any;
+  selectedFeeling: Feeling | null;
   resetForm: () => void;
+}
+
+// New interfaces for PostCard and ReactionButton
+export interface User {
+  id: string;
+  name: string;
+  avatar: string;
+}
+
+export interface Image {
+  uri: string;
+  width?: number;
+  height?: number;
+  // Add other properties if needed
+}
+
+export interface Feeling {
+  icon: string;
+  name: string;
+}
+
+export interface ActivityType {
+  name: string;
+  icon: string;
+}
+
+export interface PostBase {
+  id: string;
+  author: User;
+  timestamp: string;
+  selectedVisibility: "Public" | "Friends" | "Only Me";
+  commentCount: number;
+  reactionCounts: {
+    like: number;
+    love: number;
+    haha: number;
+    sad: number;
+    angry: number;
+  };
+  myReaction?: "like" | "love" | "haha" | "sad" | "angry" | null;
+}
+
+export interface PostData extends PostBase {
+  postType: "Post";
+  postContent: string;
+  postImages: Image[];
+  selectedFeeling?: Feeling;
+  taggedFriends?: User[];
+  selectedLocation?: string;
+}
+
+export interface EventData extends PostBase {
+  postType: "Event";
+  eventName: string;
+  eventStartDate: string;
+  eventEndDate: string;
+  eventDescription: string;
+  coverImage?: Image;
+  selectedLocation?: string;
+}
+
+export interface StoryData extends PostBase {
+  postType: "Story";
+  storyText: string;
+  storyImage?: Image;
+}
+
+export interface ActivityData extends PostBase {
+  postType: "Activity";
+  selectedActivity: ActivityType;
+  artistCredit?: string;
+  postContent: string;
+  postImages?: Image[];
+  taggedFriends?: User[];
+  selectedLocation?: string;
+  selectedFeeling?: Feeling;
+}
+
+export type PostItem = PostData | EventData | StoryData | ActivityData;
+
+export interface PostCardProps {
+  post: PostItem;
+  isDarkMode: boolean;
+}
+
+export interface ReactionButtonProps {
+  reactionCounts: {
+    like: number;
+    love: number;
+    haha: number;
+    sad: number;
+    angry: number;
+  };
+  myReaction: "like" | "love" | "haha" | "sad" | "angry" | null;
+  onReact: (reaction: "like" | "love" | "haha" | "sad" | "angry" | null) => void;
+  isDarkMode: boolean;
 }

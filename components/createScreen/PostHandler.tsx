@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback } from "react";
 
 interface UsePostHandlerProps {
   postType: string;
@@ -47,7 +47,7 @@ const usePostHandler = ({
       postData.eventName = eventName;
       postData.eventStartDate = eventStartDate;
       postData.eventEndDate = eventEndDate;
-      postData.eventDescription = postContent; // Using postContent for event description
+      postData.eventDescription = postContent;
       postData.coverImage = postImages.length > 0 ? postImages[0].uri : null;
       postData.selectedLocation = selectedLocation;
     } else if (postType === "Story") {

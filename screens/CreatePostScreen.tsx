@@ -1,11 +1,8 @@
-import React from 'react';
-import CreatePostForm from '../components/home/CreatePostForm';
-import { StackScreenProps } from '@react-navigation/stack';
-import { RootStackParamList } from '../types';
+import React from "react";
+import CreatePostForm from "../components/createScreen/CreatePostForm";
+import { RootStackParamList } from "../types";
 
-type CreatePostScreenProps = StackScreenProps<RootStackParamList, 'CreatePost'>;
-
-const CreatePostScreen: React.FC<CreatePostScreenProps> = ({ navigation }) => {
+const CreatePostScreen: React.FC<any> = ({ navigation }) => {
   const handleClose = () => {
     navigation.goBack();
   };
