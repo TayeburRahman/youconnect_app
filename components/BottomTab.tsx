@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs"; // Import BottomTabBarProps
 import { useTheme } from "../contexts/ThemeContext";
@@ -24,6 +25,7 @@ const BottomTab: React.FC<BottomTabBarProps> = ({
     { name: "Profile", icon: "person", iconOutline: "person-outline" },
   ];
 
+  const insets = useSafeAreaInsets();
   return (
     <View
       style={[
@@ -31,6 +33,7 @@ const BottomTab: React.FC<BottomTabBarProps> = ({
         {
           backgroundColor: isDarkMode ? "#1C1C1E" : "#FFFFFF",
           borderTopColor: isDarkMode ? "#3A3A3C" : "#E5E5EA",
+          paddingBottom: insets.bottom, // Dynamically adjust padding for bottom safe area
         },
       ]}
     >
@@ -107,7 +110,7 @@ export default BottomTab;
 
 const styles = StyleSheet.create({
   bottomNav: {
-    height: 80,
+    height: 95,
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
@@ -115,9 +118,9 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    zIndex: 10,
+    zIndex: 999, // Increased z-index to ensure it's always on top
     borderTopWidth: 1,
-    paddingBottom: 10, // For notch space
+    // paddingBottom will be applied dynamically
   },
   tab: {
     flex: 1, // Distribute space evenly

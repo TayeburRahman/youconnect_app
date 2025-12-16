@@ -2,15 +2,17 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { SafeAreaView as RNSafeAreaView } from "react-native"; // Rename original SafeAreaView
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import CustomStatusBar from "./components/CustomStatusBar";
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import HomeScreen from "./screens/HomeScreen";
 import CreatePostScreen from "./screens/CreatePostScreen";
+import SearchScreen from "./screens/SearchScreen";
+import ProfileScreen from "./screens/ProfileScreen";
 import BottomTab from "./components/BottomTab";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { RootStackParamList, RootTabParamList } from "./types";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context"; // Import from safe-area-context
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootTabParamList>();
@@ -22,7 +24,9 @@ const MainTabNavigator: React.FC = () => {
       tabBar={(props) => <BottomTab {...props} />}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Search" component={SearchScreen} />
       <Tab.Screen name="CreatePost" component={CreatePostScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
 };
@@ -30,22 +34,22 @@ const MainTabNavigator: React.FC = () => {
 export default function App() {
   return (
     <ThemeProvider>
-      <SafeAreaProvider> {/* Wrap with SafeAreaProvider */}
-        <SafeAreaView style={{ flex: 1 }}> {/* Use SafeAreaView from safe-area-context */}
-          <NavigationContainer>
-            <Stack.Navigator
-              initialRouteName="Login"
-              screenOptions={{ headerShown: false }}
-            >
-              <Stack.Screen name="Login" component={LoginScreen} />
-              <Stack.Screen name="Register" component={RegisterScreen} />
-              <Stack.Screen
-                name="MainTabNavigator"
-                component={MainTabNavigator}
-              />
-            </Stack.Navigator>
-          </NavigationContainer>
-        </SafeAreaView>
+      <SafeAreaProvider>
+        <CustomStatusBar backgroundColor="#053F53" barStyle="light-content" />
+        <NavigationContainer>
+          <Stack.Navigator
+            initialRouteName="Login"
+            screenOptions={{ headerShown: false }}
+          >
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Register" component={RegisterScreen} />
+            <Stack.Screen
+              name="MainTabNavigator"
+              component={MainTabNavigator}
+            />
+            {/* Removed extraneous space */}
+          </Stack.Navigator>
+        </NavigationContainer>
       </SafeAreaProvider>
     </ThemeProvider>
   );

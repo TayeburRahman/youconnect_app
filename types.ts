@@ -184,7 +184,7 @@ export interface ReactionButtonProps {
     sad: number;
     angry: number;
   };
-  myReaction: "like" | "love" | "haha" | "sad" | "angry" | null;
+  myReaction: "like" | "love" | "haha" | "sad" | "angry" | null | undefined;
   onReact: (reaction: "like" | "love" | "haha" | "sad" | "angry" | null) => void;
   isDarkMode: boolean;
 }

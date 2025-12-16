@@ -9,6 +9,7 @@ import {
   Modal,
   FlatList,
   TouchableWithoutFeedback,
+  ActivityIndicator, // Import ActivityIndicator
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -226,7 +227,9 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onClose }) => {
     setArtistCredit("");
   }, []);
 
-  const { handlePostSubmit } = usePostHandler({
+  const [isPosting, setIsPosting] = useState(false); // New state for loading indicator
+
+  const { handlePostSubmit: originalHandlePostSubmit } = usePostHandler({
     postType,
     postContent,
     postImages,
@@ -242,8 +245,22 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onClose }) => {
     resetForm,
   });
 
+  const handlePostSubmit = async () => {
+    setIsPosting(true);
+    try {
+      await originalHandlePostSubmit();
+      onClose(); // Close the screen after successful post
+    } catch (error) {
+      console.error("Error posting:", error);
+      // Optionally show an alert to the user
+    } finally {
+      setIsPosting(false);
+    }
+  };
+
+
   return (
-    <ScrollView>
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
       {" "}
       {/* Removed SafeAreaView and Header section */}
       {/* Post Type Selector */}
@@ -264,6 +281,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onClose }) => {
                 },
               ]}
               onPress={() => setPostType(type.name)}
+              disabled={isPosting} // Disable while posting
             >
               <Ionicons
                 name={
@@ -304,7 +322,6 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onClose }) => {
           ))}
         </View>
       </View>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
         {postType === "Post" && (
           <PostForm
             isDarkMode={isDarkMode}
@@ -387,6 +404,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onClose }) => {
                   },
                 ]}
                 onPress={() => setSelectedVisibility(item)}
+                disabled={isPosting} // Disable while posting
               >
                 <Text
                   style={[
@@ -409,10 +427,13 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onClose }) => {
             ))}
           </View>
         )}
-      </ScrollView>
       <LinearGradient colors={["#8E24AA", "#FF4081"]} style={styles.postButton}>
-        <TouchableOpacity onPress={handlePostSubmit}>
-          <Text style={styles.postButtonText}>Post</Text>
+        <TouchableOpacity onPress={handlePostSubmit} disabled={isPosting}>
+          {isPosting ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.postButtonText}>Post</Text>
+          )}
         </TouchableOpacity>
       </LinearGradient>
       {/* Modals */}

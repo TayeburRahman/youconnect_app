@@ -35,10 +35,13 @@ const ProfileScreen: React.FC<Props> = () => {
   const { isDarkMode, toggleTheme } = useTheme();
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: isDarkMode ? "#0A0A0F" : "#F0F2F5" }]}>
-      <ScrollView
-        contentContainerStyle={styles.scrollContainer}
-      >
+    <SafeAreaView
+      style={[
+        styles.safeArea,
+        { backgroundColor: isDarkMode ? "#0A0A0F" : "#F0F2F5" },
+      ]}
+    >
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* Profile Header */}
         <View style={styles.header}>
           <Image
@@ -61,12 +64,7 @@ const ProfileScreen: React.FC<Props> = () => {
           >
             {user.username}
           </Text>
-          <Text
-            style={[
-              styles.bio,
-              { color: isDarkMode ? "#CCC" : "#555" },
-            ]}
-          >
+          <Text style={[styles.bio, { color: isDarkMode ? "#CCC" : "#555" }]}>
             {user.bio}
           </Text>
         </View>
@@ -130,7 +128,7 @@ const ProfileScreen: React.FC<Props> = () => {
         </View>
 
         {/* Buttons */}
-        <View style={styles.buttonGroup}>
+        {/* <View style={styles.buttonGroup}>
           <CustomButton
             title="Edit Profile"
             onPress={() => console.log("Edit Profile clicked")}
@@ -143,11 +141,20 @@ const ProfileScreen: React.FC<Props> = () => {
             buttonStyle={[styles.profileButton, { backgroundColor: isDarkMode ? "#333" : "#E0E0E0" }]}
             textStyle={{ color: isDarkMode ? "#FFF" : "#000" }}
           />
-        </View>
+        </View> */}
 
         {/* Dark Mode Toggle */}
-        <View style={[styles.optionRow, { borderBottomColor: isDarkMode ? "#333" : "#E0E0E0" }]}>
-          <Text style={[styles.optionText, { color: isDarkMode ? "#FFF" : "#000" }]}>Dark Mode</Text>
+        <View
+          style={[
+            styles.optionRow,
+            { borderBottomColor: isDarkMode ? "#333" : "#E0E0E0" },
+          ]}
+        >
+          <Text
+            style={[styles.optionText, { color: isDarkMode ? "#FFF" : "#000" }]}
+          >
+            Dark Mode
+          </Text>
           <Switch
             trackColor={{ false: "#767577", true: "#FF29B2" }}
             thumbColor={isDarkMode ? "#F4F3F4" : "#F4F3F4"}
@@ -158,18 +165,41 @@ const ProfileScreen: React.FC<Props> = () => {
 
         {/* Additional User List Button (Placeholder) */}
         <TouchableOpacity style={styles.optionRow}>
-            <Text style={[styles.optionText, { color: isDarkMode ? "#FFF" : "#000" }]}>Settings</Text>
-            <Ionicons name="chevron-forward" size={20} color={isDarkMode ? "#AAA" : "#666"} />
+          <Text
+            style={[styles.optionText, { color: isDarkMode ? "#FFF" : "#000" }]}
+          >
+            Settings
+          </Text>
+          <Ionicons
+            name="chevron-forward"
+            size={20}
+            color={isDarkMode ? "#AAA" : "#666"}
+          />
         </TouchableOpacity>
         <TouchableOpacity style={styles.optionRow}>
-            <Text style={[styles.optionText, { color: isDarkMode ? "#FFF" : "#000" }]}>Privacy</Text>
-            <Ionicons name="chevron-forward" size={20} color={isDarkMode ? "#AAA" : "#666"} />
+          <Text
+            style={[styles.optionText, { color: isDarkMode ? "#FFF" : "#000" }]}
+          >
+            Privacy
+          </Text>
+          <Ionicons
+            name="chevron-forward"
+            size={20}
+            color={isDarkMode ? "#AAA" : "#666"}
+          />
         </TouchableOpacity>
         <TouchableOpacity style={styles.optionRow}>
-            <Text style={[styles.optionText, { color: isDarkMode ? "#FFF" : "#000" }]}>Help & Support</Text>
-            <Ionicons name="chevron-forward" size={20} color={isDarkMode ? "#AAA" : "#666"} />
+          <Text
+            style={[styles.optionText, { color: isDarkMode ? "#FFF" : "#000" }]}
+          >
+            Help & Support
+          </Text>
+          <Ionicons
+            name="chevron-forward"
+            size={20}
+            color={isDarkMode ? "#AAA" : "#666"}
+          />
         </TouchableOpacity>
-
       </ScrollView>
     </SafeAreaView>
   );
@@ -209,16 +239,16 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 10,
     lineHeight: 20,
-    maxWidth: '80%', // Limit bio width
+    maxWidth: "80%", // Limit bio width
   },
   statsContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    alignItems: 'center',
+    alignItems: "center",
     marginVertical: 20,
     paddingVertical: 15,
     borderRadius: 10,
-    backgroundColor: 'rgba(0,0,0,0.05)', // Subtle background for stats
+    backgroundColor: "rgba(0,0,0,0.05)", // Subtle background for stats
   },
   statItem: {
     alignItems: "center",
@@ -232,8 +262,8 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   buttonGroup: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginTop: 20,
   },
   profileButton: {
@@ -241,13 +271,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     paddingVertical: 12,
     borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   optionRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingVertical: 15,
     borderBottomWidth: 1,
   },

@@ -22,6 +22,7 @@ import {
   RootTabParamList,
 } from "../types"; // Corrected type imports
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs"; // Import BottomTabScreenProps
+import { ActivityType } from "./types/types";
 
 const { width } = Dimensions.get("window");
 
@@ -103,12 +104,12 @@ const SearchScreen: React.FC<Props> = () => {
   const filterResults = (data: SearchItem[]) => {
     if (!searchQuery) return []; // Return empty if no query
 
-    return data.filter((item) => {
+    return data.filter((item: any) => {
       let searchableValue = "";
       if ("username" in item) searchableValue = item.username;
       else if ("hashtag" in item) searchableValue = item.hashtag;
       else if ("eventName" in item) searchableValue = item.eventName;
-      else if ("caption" in item) searchableValue = item.caption; // For posts
+      else if ("caption" in item) searchableValue = item.caption;
 
       return searchableValue.toLowerCase().includes(searchQuery.toLowerCase());
     });
@@ -145,7 +146,12 @@ const SearchScreen: React.FC<Props> = () => {
     if (searchQuery && filteredData.length === 0) {
       return (
         <View style={styles.noResultsContainer}>
-          <Text style={[styles.noResultsText, { color: isDarkMode ? "#AAA" : "#666" }]}>
+          <Text
+            style={[
+              styles.noResultsText,
+              { color: isDarkMode ? "#AAA" : "#666" },
+            ]}
+          >
             No results found for "{searchQuery}"
           </Text>
         </View>
@@ -159,7 +165,9 @@ const SearchScreen: React.FC<Props> = () => {
           return (
             <View key={user.id} style={cardStyle}>
               <Image source={{ uri: user.avatarUri }} style={styles.avatar} />
-              <Text style={[styles.cardText, cardTextStyle]}>{user.username}</Text>
+              <Text style={[styles.cardText, cardTextStyle]}>
+                {user.username}
+              </Text>
             </View>
           );
         case "Hashtags":
@@ -175,9 +183,13 @@ const SearchScreen: React.FC<Props> = () => {
           const post = item as SearchPostItem;
           return (
             <View key={post.id} style={cardStyle}>
-              <Text style={[styles.cardText, cardTextStyle]}>{post.username}</Text>
+              <Text style={[styles.cardText, cardTextStyle]}>
+                {post.username}
+              </Text>
               <Image source={{ uri: post.imageUri }} style={styles.cardImage} />
-              <Text style={[styles.cardText, cardTextStyle]}>{post.caption}</Text>
+              <Text style={[styles.cardText, cardTextStyle]}>
+                {post.caption}
+              </Text>
             </View>
           );
         case "Events":
@@ -200,12 +212,13 @@ const SearchScreen: React.FC<Props> = () => {
   };
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: isDarkMode ? "#0A0A0F" : "#FFFFFF" }]}>
-      <View
-        style={[
-          styles.container,
-        ]}
-      >
+    <SafeAreaView
+      style={[
+        styles.safeArea,
+        { backgroundColor: isDarkMode ? "#0A0A0F" : "#FFFFFF" },
+      ]}
+    >
+      <View style={[styles.container]}>
         {/* Search Bar */}
         <View
           style={[
@@ -221,7 +234,10 @@ const SearchScreen: React.FC<Props> = () => {
           />
           <TextInput
             placeholder="Search here"
-            style={[styles.searchInput, { color: isDarkMode ? "#FFF" : "#000" }]}
+            style={[
+              styles.searchInput,
+              { color: isDarkMode ? "#FFF" : "#000" },
+            ]}
             placeholderTextColor="#888"
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -247,7 +263,7 @@ const SearchScreen: React.FC<Props> = () => {
                   : demoEvents
               }
               keyExtractor={(item) => item.id.toString()}
-              renderItem={({ item }) => {
+              renderItem={({ item }: any) => {
                 const label =
                   "username" in item
                     ? item.username
@@ -255,7 +271,9 @@ const SearchScreen: React.FC<Props> = () => {
                     ? item.hashtag
                     : "eventName" in item
                     ? item.eventName
-                    : "caption" in item ? item.caption : ""; // Added for posts
+                    : "caption" in item
+                    ? item.caption
+                    : "";
 
                 return (
                   <TouchableOpacity
@@ -303,111 +321,111 @@ const SearchScreen: React.FC<Props> = () => {
 
 // Stylesheet definition (moved from SearchScreen.styles.ts)
 const styles = StyleSheet.create({
-    safeArea: {
-        flex: 1,
-    },
-    container: {
-        flex: 1,
-        padding: 16,
-    },
-    searchContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginBottom: 20,
-        backgroundColor: "#f0f0f0", // Light background
-        paddingHorizontal: 12,
-        borderRadius: 8,
-        height: 40,
-    },
-    searchIcon: {
-        marginRight: 8,
-    },
-    searchInput: {
-        flex: 1,
-        fontSize: 16,
-        color: "#333", // Dark text
-    },
-    suggestionsContainer: {
-        backgroundColor: "#fff", // Light background
-        borderRadius: 8,
-        shadowColor: "#000",
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 2,
-        marginTop: 8,
-        position: "absolute",
-        top: 80,
-        left: 16,
-        right: 16,
-        maxHeight: 200,
-        zIndex: 999,
-    },
-    suggestionItem: {
-        padding: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: "#f0f0f0", // Light border
-    },
-    suggestionText: {
-        fontSize: 14,
-        color: "#333", // Dark text
-    },
-    tabsContainer: {
-        flexDirection: "row",
-        justifyContent: "space-around",
-        marginBottom: 20,
-        zIndex: 1,
-    },
-    tabText: {
-        fontSize: 16,
-        color: "#888", // Default tab text
-        fontWeight: "bold",
-    },
-    activeTabText: {
-        color: "#FF29B2", // Active tab color (pink)
-        borderBottomWidth: 2,
-        borderBottomColor: "#FF29B2",
-    },
-    content: {
-        flex: 1,
-        // marginBottom: 50, // Removed, as FlatList in HomeScreen and custom BottomTab might handle this
-    },
-    card: {
-        marginBottom: 16,
-        backgroundColor: "#f9f9f9", // Light background
-        padding: 16,
-        borderRadius: 12,
-        shadowColor: "#000",
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 2,
-    },
-    cardText: {
-        fontSize: 14,
-        color: "#333", // Dark text
-        marginBottom: 8,
-    },
-    cardImage: {
-        width: "100%",
-        height: 200,
-        borderRadius: 10,
-        marginBottom: 8,
-    },
-    avatar: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        marginBottom: 8,
-    },
-    noResultsContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingVertical: 50,
-    },
-    noResultsText: {
-        fontSize: 16,
-        textAlign: 'center',
-    },
+  safeArea: {
+    flex: 1,
+  },
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+    backgroundColor: "#f0f0f0", // Light background
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    height: 40,
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: "#333", // Dark text
+  },
+  suggestionsContainer: {
+    backgroundColor: "#fff", // Light background
+    borderRadius: 8,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+    marginTop: 8,
+    position: "absolute",
+    top: 80,
+    left: 16,
+    right: 16,
+    maxHeight: 200,
+    zIndex: 999,
+  },
+  suggestionItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f0f0f0", // Light border
+  },
+  suggestionText: {
+    fontSize: 14,
+    color: "#333", // Dark text
+  },
+  tabsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginBottom: 20,
+    zIndex: 1,
+  },
+  tabText: {
+    fontSize: 16,
+    color: "#888", // Default tab text
+    fontWeight: "bold",
+  },
+  activeTabText: {
+    color: "#FF29B2", // Active tab color (pink)
+    borderBottomWidth: 2,
+    borderBottomColor: "#FF29B2",
+  },
+  content: {
+    flex: 1,
+    // marginBottom: 50, // Removed, as FlatList in HomeScreen and custom BottomTab might handle this
+  },
+  card: {
+    marginBottom: 16,
+    backgroundColor: "#f9f9f9", // Light background
+    padding: 16,
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  cardText: {
+    fontSize: 14,
+    color: "#333", // Dark text
+    marginBottom: 8,
+  },
+  cardImage: {
+    width: "100%",
+    height: 200,
+    borderRadius: 10,
+    marginBottom: 8,
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginBottom: 8,
+  },
+  noResultsContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 50,
+  },
+  noResultsText: {
+    fontSize: 16,
+    textAlign: "center",
+  },
 });
 
 export default SearchScreen;
