@@ -7,6 +7,8 @@ import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import HomeScreen from "./screens/HomeScreen";
 import CreatePostScreen from "./screens/CreatePostScreen";
+import SearchScreen from "./screens/SearchScreen"; // Import SearchScreen
+import ProfileScreen from "./screens/ProfileScreen"; // Import ProfileScreen
 import BottomTab from "./components/BottomTab";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { RootStackParamList, RootTabParamList } from "./types";
@@ -21,7 +23,9 @@ const MainTabNavigator: React.FC = () => {
       tabBar={(props) => <BottomTab {...props} />}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Search" component={SearchScreen} /> {/* Add Search screen */}
       <Tab.Screen name="CreatePost" component={CreatePostScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} /> {/* Add Profile screen */}
     </Tab.Navigator>
   );
 };

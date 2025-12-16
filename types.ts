@@ -7,6 +7,8 @@ export type RootStackParamList = {
 export type RootTabParamList = {
     Home: undefined;
     CreatePost: undefined;
+    Search: undefined; // New: Search tab
+    Profile: undefined; // New: Profile tab
     // Add other screens you want in the bottom tab here
 };
 
@@ -186,3 +188,31 @@ export interface ReactionButtonProps {
   onReact: (reaction: "like" | "love" | "haha" | "sad" | "angry" | null) => void;
   isDarkMode: boolean;
 }
+
+// New types for SearchScreen
+export interface SearchUserItem {
+  id: string | number;
+  username: string;
+  avatarUri: string;
+}
+
+export interface SearchHashtagItem {
+  id: string | number;
+  hashtag: string;
+}
+
+export interface SearchPostItem {
+  id: string | number;
+  username: string;
+  caption: string;
+  imageUri: string;
+}
+
+export interface SearchEventItem {
+  id: string | number;
+  eventName: string;
+  date: string;
+  location: string;
+}
+
+export type SearchItem = SearchUserItem | SearchHashtagItem | SearchPostItem | SearchEventItem;

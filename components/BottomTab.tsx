@@ -4,13 +4,24 @@ import { Ionicons } from "@expo/vector-icons";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs"; // Import BottomTabBarProps
 import { useTheme } from "../contexts/ThemeContext";
 
-const BottomTab: React.FC<BottomTabBarProps> = ({ state, descriptors, navigation }) => {
+const BottomTab: React.FC<BottomTabBarProps> = ({
+  state,
+  descriptors,
+  navigation,
+}) => {
   const { isDarkMode } = useTheme();
 
   const tabItems = [
     { name: "Home", icon: "home", iconOutline: "home-outline", label: "Home" },
-    { name: "CreatePost", icon: "add-circle", iconOutline: "add-circle-outline", label: "Create" },
-    // Add other tab items here as needed
+    {
+      name: "CreatePost",
+      icon: "add-circle",
+      iconOutline: "add-circle-outline",
+      label: "Create",
+    },
+    { name: "Search", icon: "search", iconOutline: "search-outline" },
+
+    { name: "Profile", icon: "person", iconOutline: "person-outline" },
   ];
 
   return (
@@ -27,11 +38,11 @@ const BottomTab: React.FC<BottomTabBarProps> = ({ state, descriptors, navigation
         const { options } = descriptors[route.key];
         const isFocused = state.index === index;
 
-        const tabItem = tabItems.find(item => item.name === route.name);
+        const tabItem = tabItems.find((item) => item.name === route.name);
 
         const onPress = () => {
           const event = navigation.emit({
-            type: 'tabPress',
+            type: "tabPress",
             target: route.key,
             canPreventDefault: true,
           });
@@ -43,7 +54,7 @@ const BottomTab: React.FC<BottomTabBarProps> = ({ state, descriptors, navigation
 
         const onLongPress = () => {
           navigation.emit({
-            type: 'tabLongPress',
+            type: "tabLongPress",
             target: route.key,
           });
         };
@@ -62,26 +73,23 @@ const BottomTab: React.FC<BottomTabBarProps> = ({ state, descriptors, navigation
             <Ionicons
               name={
                 isFocused
-                  ? (tabItem?.icon as any) || (options.tabBarIcon as any) || 'help-circle'
-                  : (tabItem?.iconOutline as any) || (options.tabBarIcon as any) || 'help-circle-outline'
+                  ? (tabItem?.icon as any) ||
+                    (options.tabBarIcon as any) ||
+                    "help-circle"
+                  : (tabItem?.iconOutline as any) ||
+                    (options.tabBarIcon as any) ||
+                    "help-circle-outline"
               }
               size={26}
-              color={
-                isFocused
-                  ? "#FF29B2"
-                  : isDarkMode
-                  ? "#8E8E93"
-                  : "#8E8E93"
-              }
+              color={isFocused ? "#FF29B2" : isDarkMode ? "#8E8E93" : "#8E8E93"}
             />
             <Text
               style={{
-                color:
-                  isFocused
-                    ? "#FF29B2"
-                    : isDarkMode
-                    ? "#8E8E93"
-                    : "#8E8E93",
+                color: isFocused
+                  ? "#FF29B2"
+                  : isDarkMode
+                  ? "#8E8E93"
+                  : "#8E8E93",
                 fontSize: 10,
                 marginTop: 2,
               }}
