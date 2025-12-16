@@ -1,61 +1,90 @@
 [
   {
-    "postType": "Post",
+    "id": "post1",
+    "author": { "id": "1", "name": "John Doe", "avatar": "https://i.pravatar.cc/150?img=11" },
+    "timestamp": "2025-12-16T10:00:00Z",
     "selectedVisibility": "Public",
+    "commentCount": 23,
+    "reactionCounts": { "like": 150, "love": 30, "haha": 5, "sad": 1, "angry": 0 },
+    "myReaction": "like",
+    "postType": "Post",
     "postContent": "Enjoying a beautiful sunset today! #sunset #goodvibes",
     "postImages": [
-      "https://example.com/images/sunset1.jpg",
-      "https://example.com/images/sunset2.jpg"
+      { "uri": "https://example.com/images/sunset1.jpg" },
+      { "uri": "https://example.com/images/sunset2.jpg" }
     ],
     "selectedFeeling": {
       "icon": "😊",
       "name": "Happy"
     },
     "taggedFriends": [
-      { "id": "1", "name": "John Doe", "avatar": "https://i.pravatar.cc/150?img=11" },
       { "id": "2", "name": "Jane Smith", "avatar": "https://i.pravatar.cc/150?img=12" }
     ],
     "selectedLocation": "Santa Monica Beach, CA"
   },
   {
-    "postType": "Post",
+    "id": "post2",
+    "author": { "id": "3", "name": "Peter Jones", "avatar": "https://i.pravatar.cc/150?img=13" },
+    "timestamp": "2025-12-15T18:30:00Z",
     "selectedVisibility": "Friends",
+    "commentCount": 12,
+    "reactionCounts": { "like": 80, "love": 15, "haha": 2, "sad": 0, "angry": 0 },
+    "myReaction": null,
+    "postType": "Post",
     "postContent": "Having a great time at the new cafe downtown! Highly recommend their latte. #coffeeshop #friends",
     "postImages": [
-      "https://example.com/images/latte.jpg"
+      { "uri": "https://example.com/images/latte.jpg" }
     ],
     "selectedFeeling": {
       "icon": "☕",
       "name": "Relaxed"
     },
     "taggedFriends": [
-      { "id": "3", "name": "Peter Jones", "avatar": "https://i.pravatar.cc/150?img=13" }
+      { "id": "4", "name": "Liam Williams", "avatar": "https://i.pravatar.cc/150?img=14" }
     ],
     "selectedLocation": "The Daily Grind, Downtown"
   },
   {
-    "postType": "Event",
+    "id": "event1",
+    "author": { "id": "5", "name": "Olivia Brown", "avatar": "https://i.pravatar.cc/150?img=15" },
+    "timestamp": "2025-12-10T09:00:00Z",
     "selectedVisibility": "Friends",
+    "commentCount": 5,
+    "reactionCounts": { "like": 45, "love": 10, "haha": 0, "sad": 0, "angry": 0 },
+    "myReaction": "love",
+    "postType": "Event",
     "eventName": "React Native Workshop",
     "eventStartDate": "12/25/2025 10:00 AM",
     "eventEndDate": "12/25/2025 01:00 PM",
     "eventDescription": "A hands-on workshop to learn the basics of React Native development.",
-    "coverImage": "https://example.com/images/rn_workshop.jpg",
+    "coverImage": { "uri": "https://example.com/images/rn_workshop.jpg" },
     "selectedLocation": "Tech Hub, Silicon Valley"
   },
   {
-    "postType": "Event",
+    "id": "event2",
+    "author": { "id": "6", "name": "Ethan Green", "avatar": "https://i.pravatar.cc/150?img=16" },
+    "timestamp": "2025-12-08T14:00:00Z",
     "selectedVisibility": "Public",
+    "commentCount": 30,
+    "reactionCounts": { "like": 200, "love": 70, "haha": 10, "sad": 2, "angry": 1 },
+    "myReaction": null,
+    "postType": "Event",
     "eventName": "Local Music Festival",
     "eventStartDate": "01/15/2026 03:00 PM",
     "eventEndDate": "01/16/2026 11:00 PM",
     "eventDescription": "Join us for a weekend of live music, food trucks, and good vibes! Featuring local artists.",
-    "coverImage": "https://example.com/images/music_fest.jpg",
+    "coverImage": { "uri": "https://example.com/images/music_fest.jpg" },
     "selectedLocation": "City Park Amphitheater"
   },
   {
-    "postType": "Activity",
+    "id": "activity1",
+    "author": { "id": "7", "name": "Sophia White", "avatar": "https://i.pravatar.cc/150?img=17" },
+    "timestamp": "2025-12-14T11:00:00Z",
     "selectedVisibility": "Public",
+    "commentCount": 8,
+    "reactionCounts": { "like": 60, "love": 5, "haha": 0, "sad": 0, "angry": 0 },
+    "myReaction": "like",
+    "postType": "Activity",
     "selectedActivity": {
       "name": "Creating art",
       "icon": "brush"
@@ -63,7 +92,7 @@
     "artistCredit": "Artwork by Jane Smith",
     "postContent": "Just finished this piece! Let me know what you think. #digitalart #painting",
     "postImages": [
-      "https://example.com/images/my_artwork.jpg"
+      { "uri": "https://example.com/images/my_artwork.jpg" }
     ],
     "taggedFriends": [],
     "selectedLocation": null,
@@ -73,8 +102,14 @@
     }
   },
   {
-    "postType": "Activity",
+    "id": "activity2",
+    "author": { "id": "1", "name": "John Doe", "avatar": "https://i.pravatar.cc/150?img=11" },
+    "timestamp": "2025-12-13T07:00:00Z",
     "selectedVisibility": "Friends",
+    "commentCount": 3,
+    "reactionCounts": { "like": 25, "love": 2, "haha": 1, "sad": 0, "angry": 0 },
+    "myReaction": null,
+    "postType": "Activity",
     "selectedActivity": {
       "name": "Working out",
       "icon": "barbell"
@@ -92,15 +127,27 @@
     }
   },
   {
-    "postType": "Story",
+    "id": "story1",
+    "author": { "id": "2", "name": "Jane Smith", "avatar": "https://i.pravatar.cc/150?img=12" },
+    "timestamp": "2025-12-16T08:00:00Z",
     "selectedVisibility": "Public",
+    "commentCount": 0,
+    "reactionCounts": { "like": 10, "love": 5, "haha": 0, "sad": 0, "angry": 0 },
+    "myReaction": null,
+    "postType": "Story",
     "storyText": "Morning coffee vibes! ☕",
-    "storyImage": "https://example.com/images/coffee_story.jpg"
+    "storyImage": { "uri": "https://example.com/images/coffee_story.jpg" }
   },
   {
-    "postType": "Story",
+    "id": "story2",
+    "author": { "id": "5", "name": "Olivia Brown", "avatar": "https://i.pravatar.cc/150?img=15" },
+    "timestamp": "2025-12-12T22:00:00Z",
     "selectedVisibility": "Only Me",
+    "commentCount": 0,
+    "reactionCounts": { "like": 1, "love": 0, "haha": 0, "sad": 0, "angry": 0 },
+    "myReaction": null,
+    "postType": "Story",
     "storyText": "Throwback to last summer's adventure! Missing these views. 🏞️",
-    "storyImage": "https://example.com/images/summer_adventure.jpg"
+    "storyImage": { "uri": "https://example.com/images/summer_adventure.jpg" }
   }
 ]

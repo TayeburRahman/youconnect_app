@@ -243,8 +243,9 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onClose }) => {
   });
 
   return (
-    <View> {/* Removed SafeAreaView and Header section */}
-
+    <ScrollView>
+      {" "}
+      {/* Removed SafeAreaView and Header section */}
       {/* Post Type Selector */}
       <View style={styles.postTypeContainer}>
         <View
@@ -303,7 +304,6 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onClose }) => {
           ))}
         </View>
       </View>
-
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {postType === "Post" && (
           <PostForm
@@ -410,13 +410,11 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onClose }) => {
           </View>
         )}
       </ScrollView>
-
       <LinearGradient colors={["#8E24AA", "#FF4081"]} style={styles.postButton}>
         <TouchableOpacity onPress={handlePostSubmit}>
           <Text style={styles.postButtonText}>Post</Text>
         </TouchableOpacity>
       </LinearGradient>
-
       {/* Modals */}
       {[
         {
@@ -610,7 +608,6 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onClose }) => {
           </TouchableOpacity>
         </Modal>
       ))}
-
       {datePickerVisible && (
         <Modal
           transparent={true}
@@ -731,7 +728,6 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onClose }) => {
           </TouchableOpacity>
         </Modal>
       )}
-
       {/* Image Viewer Modal */}
       <Modal
         animationType="fade"
@@ -753,7 +749,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onClose }) => {
           />
         </View>
       </Modal>
-    </View>
+    </ScrollView>
   );
 };
 
