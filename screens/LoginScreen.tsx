@@ -8,15 +8,18 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
+  Dimensions // Import Dimensions for responsive design
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../types";
 import CustomInput from "../components/CustomInput";
 import CustomButton from "../components/CustomButton";
-import SocialButton from "../components/SocialButton"; // Import SocialButton
+import SocialButton from "../components/SocialButton";
 import { useTheme } from "../contexts/ThemeContext";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons"; // Ensure Ionicons is imported for checkbox
+import { Ionicons } from "@expo/vector-icons";
+
+const { width } = Dimensions.get("window"); // Get screen width for responsive sizing
 
 type Props = NativeStackScreenProps<RootStackParamList, "Login">;
 
@@ -26,19 +29,9 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
 
-  // Placeholder functions for social logins
-  const handleGoogleLogin = () => {
-    console.log("Google Login Pressed");
-    // Implement Google login logic
-  };
-  const handleAppleLogin = () => {
-    console.log("Apple Login Pressed");
-    // Implement Apple login logic
-  };
-  const handleFacebookLogin = () => {
-    console.log("Facebook Login Pressed");
-    // Implement Facebook login logic
-  };
+  const handleGoogleLogin = () => { console.log("Google Login Pressed"); };
+  const handleAppleLogin = () => { console.log("Apple Login Pressed"); };
+  const handleFacebookLogin = () => { console.log("Facebook Login Pressed"); };
 
   return (
     <LinearGradient
@@ -110,8 +103,8 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
                 or login with
               </Text>
               <View style={styles.socialButtons}>
-                <SocialButton provider="google" onPress={handleGoogleLogin} />
-                <SocialButton provider="apple" onPress={handleAppleLogin} />
+                <SocialButton provider="google" onPress={handleGoogleLogin} style={styles.individualSocialButton} />
+                <SocialButton provider="apple" onPress={handleAppleLogin} style={styles.individualSocialButton} />
                 {/* <SocialButton provider="facebook" onPress={handleFacebookLogin} /> */}
               </View>
             </View>
@@ -145,14 +138,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
+    minHeight: '100%', // Ensure scroll view takes full height to center content
   },
   header: {
     alignItems: "center",
     marginBottom: 40,
   },
   logo: {
-    width: 100,
-    height: 100,
+    width: width * 0.3, // Responsive width
+    height: width * 0.3, // Keep aspect ratio
     resizeMode: "contain",
     marginBottom: 20,
   },
@@ -166,6 +160,7 @@ const styles = StyleSheet.create({
   },
   form: {
     width: "100%",
+    maxWidth: 400, // Max width for larger screens
     alignItems: "center",
   },
   optionsContainer: {
@@ -185,7 +180,7 @@ const styles = StyleSheet.create({
   },
   forgotPasswordText: {
     fontSize: 14,
-    color: "#FF29B2", // Highlight color
+    color: "#FF29B2",
     fontWeight: "600",
   },
   loginButton: {
@@ -194,7 +189,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#FF29B2", // Primary button color
+    backgroundColor: "#FF29B2",
     marginTop: 10,
   },
   loginButtonText: {
@@ -212,9 +207,14 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   socialButtons: {
-    flexDirection: "column", // Changed to column for vertical stacking
+    flexDirection: "row", // Changed to row for horizontal stacking
+    justifyContent: "space-evenly", // Distribute space evenly
     width: "100%",
-    alignItems: "center",
+  },
+  individualSocialButton: {
+    flex: 1, // Allows buttons to share space
+    marginHorizontal: 5, // Add some spacing between buttons
+    maxWidth: 150, // Limit individual button width on very wide screens
   },
   signUpContainer: {
     flexDirection: "row",
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
   },
   signUpLink: {
     fontSize: 14,
-    color: "#FF29B2", // Highlight color
+    color: "#FF29B2",
     fontWeight: "600",
   },
 });

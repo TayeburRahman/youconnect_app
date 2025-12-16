@@ -74,8 +74,9 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 10,
     borderWidth: 1,
-    width: '100%',
+    // Removed width: '100%' to allow flex sizing from parent
     marginBottom: 10,
+    marginHorizontal: 5, // Added default horizontal margin for spacing
   },
   icon: {
     marginRight: 10,
