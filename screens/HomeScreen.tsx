@@ -1,23 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   Text,
   Image,
-  Switch,
   ScrollView,
   TouchableOpacity,
 } from "react-native";
 import styles from "../styles/HomeScreen.styles";
 import { Ionicons } from "@expo/vector-icons"; // Importing Ionicons for icons
+import { useTheme } from "../contexts/ThemeContext";
 
 const placeholderImage = "https://via.placeholder.com/60"; // Placeholder image for profiles
 
 const HomeScreen: React.FC = () => {
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
-
-  const toggleTheme = () => {
-    setIsDarkMode((prevMode) => !prevMode);
-  };
+  const { isDarkMode } = useTheme();
 
   const posts = [
     {
@@ -54,16 +50,6 @@ const HomeScreen: React.FC = () => {
         { backgroundColor: isDarkMode ? "#0A0A0F" : "#FFFFFF" },
       ]}
     >
-      {/* Dark Mode Toggle */}
-      <View style={styles.themeToggle}>
-        <Text
-          style={[styles.toggleText, { color: isDarkMode ? "#FFF" : "#000" }]}
-        >
-          Dark Mode
-        </Text>
-        <Switch value={isDarkMode} onValueChange={toggleTheme} />
-      </View>
-
       {/* Connected Section */}
       <View style={styles.connectedContainer}>
         <Text

@@ -10,8 +10,11 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "../styles/SearchScreen.styles";
+import type { SearchItem, UserItem } from "./types/search.type";
+import { useTheme } from "../contexts/ThemeContext";
 
 const SearchScreen: React.FC = () => {
+  const { isDarkMode } = useTheme();
   const [activeTab, setActiveTab] = useState<string>("Users");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
@@ -85,7 +88,7 @@ const SearchScreen: React.FC = () => {
   // Function to filter results based on the active tab and search query
   const filterResults = (data: any[]) => {
     return data.filter((item: any) =>
-      Object.values(item).some((value) =>
+      Object.values(item).some((value: any) =>
         value.toString().toLowerCase().includes(searchQuery.toLowerCase())
       )
     );
@@ -93,34 +96,46 @@ const SearchScreen: React.FC = () => {
 
   // Function to render content based on the active tab
   const renderTabContent = () => {
+    const cardStyle = [
+      styles.card,
+      { backgroundColor: isDarkMode ? "#333" : "#FFF" },
+    ];
+    const cardTextStyle = { color: isDarkMode ? "#FFF" : "#000" };
+
     switch (activeTab) {
       case "Users":
         return filterResults(demoUsers).map((user) => (
-          <View key={user.id} style={styles.card}>
+          <View key={user.id} style={cardStyle}>
             <Image source={{ uri: user.avatarUri }} style={styles.avatar} />
-            <Text style={styles.cardText}>{user.username}</Text>
+            <Text style={[styles.cardText, cardTextStyle]}>{user.username}</Text>
           </View>
         ));
       case "Hashtags":
         return filterResults(demoHashtags).map((hashtag) => (
-          <View key={hashtag.id} style={styles.card}>
-            <Text style={styles.cardText}>{hashtag.hashtag}</Text>
+          <View key={hashtag.id} style={cardStyle}>
+            <Text style={[styles.cardText, cardTextStyle]}>
+              {hashtag.hashtag}
+            </Text>
           </View>
         ));
       case "Posts":
         return filterResults(demoPosts).map((post) => (
-          <View key={post.id} style={styles.card}>
-            <Text style={styles.cardText}>{post.username}</Text>
+          <View key={post.id} style={cardStyle}>
+            <Text style={[styles.cardText, cardTextStyle]}>{post.username}</Text>
             <Image source={{ uri: post.imageUri }} style={styles.cardImage} />
-            <Text style={styles.cardText}>{post.caption}</Text>
+            <Text style={[styles.cardText, cardTextStyle]}>{post.caption}</Text>
           </View>
         ));
       case "Events":
         return filterResults(demoEvents).map((event) => (
-          <View key={event.id} style={styles.card}>
-            <Text style={styles.cardText}>{event.eventName}</Text>
-            <Text style={styles.cardText}>{event.date}</Text>
-            <Text style={styles.cardText}>{event.location}</Text>
+          <View key={event.id} style={cardStyle}>
+            <Text style={[styles.cardText, cardTextStyle]}>
+              {event.eventName}
+            </Text>
+            <Text style={[styles.cardText, cardTextStyle]}>{event.date}</Text>
+            <Text style={[styles.cardText, cardTextStyle]}>
+              {event.location}
+            </Text>
           </View>
         ));
       default:
@@ -129,9 +144,19 @@ const SearchScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: isDarkMode ? "#0A0A0F" : "#FFFFFF" },
+      ]}
+    >
       {/* Search Bar */}
-      <View style={styles.searchContainer}>
+      <View
+        style={[
+          styles.searchContainer,
+          { backgroundColor: isDarkMode ? "#333" : "#F5F5F5" },
+        ]}
+      >
         <Ionicons
           name="search"
           size={20}
@@ -140,7 +165,8 @@ const SearchScreen: React.FC = () => {
         />
         <TextInput
           placeholder="Search here"
-          style={styles.searchInput}
+          style={[styles.searchInput, { color: isDarkMode ? "#FFF" : "#000" }]}
+          placeholderTextColor="#888"
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
@@ -148,8 +174,13 @@ const SearchScreen: React.FC = () => {
 
       {/* Suggestions Layer */}
       {searchQuery.length > 0 && (
-        <View style={styles.suggestionsContainer}>
-          <FlatList
+        <View
+          style={[
+            styles.suggestionsContainer,
+            { backgroundColor: isDarkMode ? "#333" : "#FFF" },
+          ]}
+        >
+          <FlatList<SearchItem>
             data={
               activeTab === "Users"
                 ? demoUsers
@@ -159,21 +190,33 @@ const SearchScreen: React.FC = () => {
                 ? demoPosts
                 : demoEvents
             }
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.suggestionItem}
-                onPress={() =>
-                  setSearchQuery(
-                    item.username || item.hashtag || item.eventName || ""
-                  )
-                }
-              >
-                <Text style={styles.suggestionText}>
-                  {item.username || item.hashtag || item.eventName}
-                </Text>
-              </TouchableOpacity>
-            )}
             keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => {
+              const label =
+                "username" in item
+                  ? item.username
+                  : "hashtag" in item
+                  ? item.hashtag
+                  : "eventName" in item
+                  ? item.eventName
+                  : "";
+
+              return (
+                <TouchableOpacity
+                  style={styles.suggestionItem}
+                  onPress={() => setSearchQuery(label)}
+                >
+                  <Text
+                    style={[
+                      styles.suggestionText,
+                      { color: isDarkMode ? "#FFF" : "#000" },
+                    ]}
+                  >
+                    {label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            }}
           />
         </View>
       )}
@@ -185,6 +228,7 @@ const SearchScreen: React.FC = () => {
             <Text
               style={[
                 styles.tabText,
+                { color: isDarkMode ? "#888" : "#888" },
                 activeTab === tab && styles.activeTabText,
               ]}
             >

@@ -1,181 +1,94 @@
-// screens/HomeScreen.tsx
 import React, { useState } from "react";
 import {
   View,
   Text,
-  FlatList,
   Image,
-  TouchableOpacity,
-  SafeAreaView,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
 } from "react-native";
-import { Video, ResizeMode } from "expo-av";
-import { styles } from "../styles/HomeScreen.styles";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../App";
+import CustomInput from "../components/CustomInput";
+import CustomButton from "../components/CustomButton";
+import { styles } from "../styles/RegisterScreen.styles";
+import { useTheme } from "../contexts/ThemeContext";
 
-type Post = {
-  id: string;
-  type: "image" | "video" | "text";
-  username: string;
-  avatar: string;
-  media?: string;
-  caption: string;
-  likes: number;
-  comments: number;
-};
+type Props = NativeStackScreenProps<RootStackParamList, "Register">;
 
-const demoPosts: Post[] = [
-  {
-    id: "1",
-    type: "image",
-    username: "Rayhan",
-    avatar: "https://i.pravatar.cc/150?img=12",
-    media: "https://images.pexels.com/photos/2088171/pexels-photo-2088171.jpeg",
-    caption: "Chilling with the vibes ✨",
-    likes: 2300,
-    comments: 180,
-  },
-  {
-    id: "2",
-    type: "video",
-    username: "Ariana",
-    avatar: "https://i.pravatar.cc/150?img=32",
-    media: "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
-    caption: "Peaceful place 🌿🍃",
-    likes: 1900,
-    comments: 120,
-  },
-  {
-    id: "3",
-    type: "text",
-    username: "Sanjida",
-    avatar: "https://i.pravatar.cc/150?img=45",
-    caption: "Start your day with a grateful heart 🤍",
-    likes: 540,
-    comments: 22,
-  },
-];
-
-const stories = [
-  "https://i.pravatar.cc/150?img=12",
-  "https://i.pravatar.cc/150?img=32",
-  "https://i.pravatar.cc/150?img=45",
-  "https://i.pravatar.cc/150?img=56",
-];
-
-const HomeScreen: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<"ForYou" | "Following">("ForYou");
-
-  const renderPost = ({ item }: { item: Post }) => (
-    <View style={styles.postCard}>
-      <View style={styles.postHeader}>
-        <Image source={{ uri: item.avatar }} style={styles.avatar} />
-        <View style={{ flex: 1 }}>
-          <Text style={styles.username}>{item.username}</Text>
-          <Text style={{ color: "#888", fontSize: 12 }}>2h ago</Text>
-        </View>
-        <Text style={styles.menu}>⋯</Text>
-      </View>
-
-      {item.type === "image" && (
-        <Image
-          source={{ uri: item.media }}
-          style={styles.media}
-          resizeMode="cover"
-        />
-      )}
-      {item.type === "video" && item.media && (
-        <Video
-          source={{ uri: item.media }}
-          style={styles.media}
-          resizeMode={ResizeMode.COVER}
-          shouldPlay={false}
-          isLooping
-        />
-      )}
-      {item.type === "text" && (
-        <View style={styles.textPost}>
-          <Text style={styles.textCaption}>{item.caption}</Text>
-        </View>
-      )}
-      {item.type !== "text" && (
-        <View style={{ paddingHorizontal: 14, paddingTop: 8 }}>
-          <Text style={styles.caption}>{item.caption}</Text>
-        </View>
-      )}
-
-      <View style={styles.actions}>
-        <TouchableOpacity>
-          <Text style={styles.actionBtn}>❤️ {item.likes}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={styles.actionBtn}>💬 {item.comments}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={styles.actionBtn}>🔁</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={styles.actionBtn}>📤</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={styles.actionBtn}>🔗</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+const RegisterScreen: React.FC<Props> = ({ navigation }) => {
+  const { isDarkMode } = useTheme();
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Top Nav */}
-      <View style={styles.topNav}>
-        <Text style={styles.logo}>NeonApp</Text>
-        <Text style={styles.navIcon}>🔍</Text>
-        <Text style={styles.navIcon}>🛎️</Text>
-      </View>
-
-      {/* Stories */}
-      <FlatList
-        data={stories}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(_, i) => i.toString()}
-        contentContainerStyle={styles.storiesContainer}
-        renderItem={({ item }) => (
-          <View style={styles.storyCircle}>
-            <Image source={{ uri: item }} style={styles.storyAvatar} />
-          </View>
-        )}
-      />
-
-      {/* Tabs */}
-      <View style={styles.tabsContainer}>
-        <TouchableOpacity onPress={() => setActiveTab("ForYou")}>
-          <Text
-            style={[styles.tabText, activeTab === "ForYou" && styles.activeTab]}
-          >
-            For You
+    <KeyboardAvoidingView
+      style={[
+        styles.container,
+        { backgroundColor: isDarkMode ? "#0A0A0F" : "#FFFFFF" },
+      ]}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.header}>
+          <Image source={require("../assets/logo.png")} style={styles.logo} />
+          <Text style={[styles.title, { color: isDarkMode ? "#FFF" : "#000" }]}>
+            Create Account
           </Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setActiveTab("Following")}>
           <Text
-            style={[
-              styles.tabText,
-              activeTab === "Following" && styles.activeTab,
-            ]}
+            style={[styles.subtitle, { color: isDarkMode ? "#888" : "#888" }]}
           >
-            Following
+            Start your journey with us
           </Text>
-        </TouchableOpacity>
-      </View>
+        </View>
 
-      {/* Feed */}
-      <FlatList
-        data={demoPosts}
-        keyExtractor={(item) => item.id}
-        renderItem={renderPost}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 90 }}
-      />
-    </SafeAreaView>
+        <View style={styles.form}>
+          <CustomInput
+            placeholder="Full Name"
+            value={fullName}
+            onChangeText={setFullName}
+            isDarkMode={isDarkMode}
+          />
+          <CustomInput
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            isDarkMode={isDarkMode}
+          />
+          <CustomInput
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            isDarkMode={isDarkMode}
+          />
+
+          <CustomButton
+            title="Register"
+            onPress={() => navigation.navigate("Home")}
+          />
+
+          <Text
+            style={[styles.loginText, { color: isDarkMode ? "#FFF" : "#000" }]}
+          >
+            Already have an account?{" "}
+            <Text
+              style={styles.loginLink}
+              onPress={() => navigation.navigate("Login")}
+            >
+              Login
+            </Text>
+          </Text>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
-export default HomeScreen;
+export default RegisterScreen;

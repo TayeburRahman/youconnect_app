@@ -1,23 +1,16 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React from 'react';
+import CreatePostForm from '../components/home/CreatePostForm';
+import { StackScreenProps } from '@react-navigation/stack';
+import { RootStackParamList } from '../types';
 
-const CreatePostScreen: React.FC = () => {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Create Post Screen</Text>
-    </View>
-  );
+type CreatePostScreenProps = StackScreenProps<RootStackParamList, 'CreatePost'>;
+
+const CreatePostScreen: React.FC<CreatePostScreenProps> = ({ navigation }) => {
+  const handleClose = () => {
+    navigation.goBack();
+  };
+
+  return <CreatePostForm onClose={handleClose} />;
 };
 
 export default CreatePostScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  text: {
-    fontSize: 24,
-  },
-});

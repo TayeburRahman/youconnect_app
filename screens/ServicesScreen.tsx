@@ -2,6 +2,7 @@
 import React from "react";
 import { View, Text, FlatList } from "react-native";
 import { styles } from "../styles/ServicesScreen.styles";
+import { useTheme } from "../contexts/ThemeContext";
 
 // Demo service data
 type ServiceItem = {
@@ -33,10 +34,23 @@ const demoServices: ServiceItem[] = [
 ];
 
 const ServicesScreen: React.FC = () => {
+  const { isDarkMode } = useTheme();
+
   const renderItem = ({ item }: { item: ServiceItem }) => (
-    <View style={styles.card}>
-      <Text style={styles.cardTitle}>{item.title}</Text>
-      <Text style={styles.cardSubtitle}>{item.description}</Text>
+    <View
+      style={[
+        styles.card,
+        { backgroundColor: isDarkMode ? "#333" : "#FFF" },
+      ]}
+    >
+      <Text style={[styles.cardTitle, { color: isDarkMode ? "#FFF" : "#000" }]}>
+        {item.title}
+      </Text>
+      <Text
+        style={[styles.cardSubtitle, { color: isDarkMode ? "#AAA" : "#888" }]}
+      >
+        {item.description}
+      </Text>
       <Text
         style={[
           styles.status,
@@ -56,9 +70,18 @@ const ServicesScreen: React.FC = () => {
   );
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: isDarkMode ? "#0A0A0F" : "#FFFFFF" },
+      ]}
+    >
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Services</Text>
+        <Text
+          style={[styles.headerTitle, { color: isDarkMode ? "#FFF" : "#000" }]}
+        >
+          Services
+        </Text>
       </View>
 
       <FlatList
