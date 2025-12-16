@@ -1,24 +1,28 @@
 import React from "react";
-import { TouchableOpacity, Text, StyleSheet } from "react-native";
+import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from "react-native";
 
 interface CustomButtonProps {
   title: string;
   onPress: () => void;
   disabled?: boolean;
+  buttonStyle?: ViewStyle; // Optional custom button style
+  textStyle?: TextStyle;    // Optional custom text style
 }
 
 const CustomButton: React.FC<CustomButtonProps> = ({
   title,
   onPress,
   disabled,
+  buttonStyle,
+  textStyle,
 }) => {
   return (
     <TouchableOpacity
-      style={[styles.button, disabled && styles.disabled]}
+      style={[styles.button, buttonStyle, disabled && styles.disabled]}
       onPress={onPress}
       disabled={disabled}
     >
-      <Text style={styles.text}>{title}</Text>
+      <Text style={[styles.text, textStyle]}>{title}</Text>
     </TouchableOpacity>
   );
 };
@@ -27,22 +31,18 @@ export default CustomButton;
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: "#4f46e5",
     padding: 16,
     borderRadius: 12,
     alignItems: "center",
-    marginTop: 10,
-    shadowColor: "#4f46e5",
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 3,
+    justifyContent: "center",
+    // Default styles, can be overridden by buttonStyle
   },
   disabled: {
-    backgroundColor: "#a5b4fc",
+    opacity: 0.6,
   },
   text: {
-    color: "#fff",
     fontWeight: "600",
     fontSize: 16,
+    // Default text styles, can be overridden by textStyle
   },
 });
