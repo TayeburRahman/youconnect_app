@@ -1,12 +1,18 @@
 import React from "react";
-import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from "react-native";
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  ViewStyle,
+  TextStyle,
+} from "react-native";
 
 interface CustomButtonProps {
   title: string;
   onPress: () => void;
   disabled?: boolean;
-  buttonStyle?: ViewStyle; // Optional custom button style
-  textStyle?: TextStyle;    // Optional custom text style
+  buttonStyle?: ViewStyle;
+  textStyle?: TextStyle;
 }
 
 const CustomButton: React.FC<CustomButtonProps> = ({
@@ -35,7 +41,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
-    // Default styles, can be overridden by buttonStyle
   },
   disabled: {
     opacity: 0.6,
@@ -43,6 +48,5 @@ const styles = StyleSheet.create({
   text: {
     fontWeight: "600",
     fontSize: 16,
-    // Default text styles, can be overridden by textStyle
   },
 });
