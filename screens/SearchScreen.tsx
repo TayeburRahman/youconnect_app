@@ -14,10 +14,10 @@ import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { useNavigation } from "@react-navigation/native";
 
 import PostCard from "../components/PostCard";
-import { RootTabParamListSearch, PostItem, SearchUserItem } from "../types"; // Ensure correct types are imported
+import { RootTabParamList, PostItem, SearchUserItem } from "../types"; // Ensure correct types are imported
 import demoFeed from "../demo_createpost_data.json"; // Demo data import
 
-type Props = BottomTabScreenProps<RootTabParamListSearch, "Search">;
+type Props = BottomTabScreenProps<RootTabParamList, "Search">;
 type TabKey = "All" | "People" | "Posts" | "Events" | "Activities";
 
 const TABS: TabKey[] = ["All", "People", "Posts", "Events", "Activities"];
