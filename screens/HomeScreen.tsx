@@ -37,7 +37,7 @@ const HomeScreen: React.FC = () => {
   );
 
   return (
-    <View // Changed from ScrollView to View as FlatList handles scrolling
+    <View
       style={[
         styles.container,
         { backgroundColor: isDarkMode ? "#0A0A0F" : "#FFFFFF" },
@@ -78,12 +78,11 @@ const HomeScreen: React.FC = () => {
         />
       </View>
 
-      {/* Posts */}
       <FlatList
         data={posts}
         keyExtractor={(item) => item.id}
         renderItem={renderPostItem}
-        contentContainerStyle={styles.postListContainer} // Add style for FlatList content
+        contentContainerStyle={styles.postListContainer}
       />
     </View>
   );

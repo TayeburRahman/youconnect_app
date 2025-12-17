@@ -10,6 +10,7 @@ import HomeScreen from "./screens/HomeScreen";
 import CreatePostScreen from "./screens/CreatePostScreen";
 import SearchScreen from "./screens/SearchScreen";
 import ProfileScreen from "./screens/ProfileScreen";
+import UserProfileScreen from "./screens/UserProfileScreen"; // Import UserProfileScreen here
 import BottomTab from "./components/BottomTab";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { RootStackParamList, RootTabParamList } from "./types";
@@ -47,7 +48,13 @@ export default function App() {
               name="MainTabNavigator"
               component={MainTabNavigator}
             />
-            {/* Removed extraneous space */}
+            {/* Add UserProfile screen here */}
+            <Stack.Screen
+              // @ts-ignore
+              name="UserProfile"
+              component={UserProfileScreen}
+              options={{ headerShown: true, title: "User Profile" }}
+            />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>

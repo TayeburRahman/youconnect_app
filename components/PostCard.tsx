@@ -1,13 +1,11 @@
-import React from "react";
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-} from "react-native";
+import React, { useState, useCallback, useMemo } from "react";
+import { View, Text, Image, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import Animated from "react-native-reanimated";
+
+import ReactionButton from "./ReactionButton";
+import FeelingBadge from "./FeelingBadge"; // Import FeelingBadge
+
 import {
   PostCardProps,
   PostItem,
@@ -16,12 +14,34 @@ import {
   StoryData,
   ActivityData,
 } from "../types";
-import ReactionButton from "./ReactionButton"; // Import ReactionButton
-import styles from "../styles/HomeScreen.styles"; // Import styles for PostCard
+import styles from "../styles/HomeScreen.styles";
 
-const { width } = Dimensions.get("window");
+/** Type guard for posts that support feelings */
+const hasFeeling = (item: PostItem): item is PostData | ActivityData => {
+  return (
+    "selectedFeeling" in item &&
+    item.selectedFeeling !== null &&
+    item.selectedFeeling !== undefined
+  );
+};
 
 const PostCard: React.FC<PostCardProps> = ({ post, isDarkMode }) => {
+  const [myReaction, setMyReaction] = useState<typeof post.myReaction>(
+    post.myReaction ?? null
+  );
+
+  const handleReact = useCallback(
+    (reaction: typeof myReaction) => {
+      setMyReaction(reaction);
+      console.log(`User reacted with ${reaction} to post ${post.id}`);
+    },
+    [post.id]
+  );
+
+  const feeling = useMemo(() => {
+    return hasFeeling(post) ? post.selectedFeeling : null;
+  }, [post]);
+
   const renderPostContent = (item: PostItem) => {
     switch (item.postType) {
       case "Post":
@@ -33,18 +53,17 @@ const PostCard: React.FC<PostCardProps> = ({ post, isDarkMode }) => {
             >
               {postItem.postContent}
             </Text>
-            {postItem.selectedFeeling && (
-              <Text
-                style={[
-                  styles.postFeeling,
-                  { color: isDarkMode ? "#CCC" : "#555" },
-                ]}
-              >
-                is feeling {postItem.selectedFeeling.icon}{" "}
-                {postItem.selectedFeeling.name}
-              </Text>
+
+            {/* Single Image */}
+            {postItem.postImages?.length === 1 && (
+              <Image
+                source={{ uri: postItem.postImages[0].uri }}
+                style={styles.singlePostImage}
+              />
             )}
-            {postItem.postImages && postItem.postImages.length > 0 && (
+
+            {/* Multiple Images */}
+            {postItem.postImages && postItem.postImages.length > 1 && (
               <View style={styles.postImageGrid}>
                 {postItem.postImages.map((img, index) => (
                   <Image
@@ -55,7 +74,9 @@ const PostCard: React.FC<PostCardProps> = ({ post, isDarkMode }) => {
                 ))}
               </View>
             )}
-            {postItem.taggedFriends && postItem.taggedFriends.length > 0 && (
+
+            {/* Tagged Friends */}
+            {!!postItem.taggedFriends?.length && (
               <Text
                 style={[
                   styles.postTags,
@@ -65,6 +86,8 @@ const PostCard: React.FC<PostCardProps> = ({ post, isDarkMode }) => {
                 — with {postItem.taggedFriends.map((f) => f.name).join(", ")}
               </Text>
             )}
+
+            {/* Location */}
             {postItem.selectedLocation && (
               <Text
                 style={[
@@ -77,6 +100,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, isDarkMode }) => {
             )}
           </View>
         );
+
       case "Event":
         const eventItem = item as EventData;
         return (
@@ -103,31 +127,9 @@ const PostCard: React.FC<PostCardProps> = ({ post, isDarkMode }) => {
                 style={styles.eventCoverImage}
               />
             )}
-            <Text
-              style={[
-                styles.eventDateTime,
-                { color: isDarkMode ? "#AAA" : "#555" },
-              ]}
-            >
-              {eventItem.eventStartDate} - {eventItem.eventEndDate}
-            </Text>
-            {eventItem.selectedLocation && (
-              <Text
-                style={[
-                  styles.eventLocation,
-                  { color: isDarkMode ? "#AAA" : "#555" },
-                ]}
-              >
-                <Ionicons
-                  name="location"
-                  size={14}
-                  color={isDarkMode ? "#AAA" : "#555"}
-                />{" "}
-                {eventItem.selectedLocation}
-              </Text>
-            )}
           </View>
         );
+
       case "Story":
         const storyItem = item as StoryData;
         return (
@@ -148,98 +150,22 @@ const PostCard: React.FC<PostCardProps> = ({ post, isDarkMode }) => {
             </Text>
           </View>
         );
+
       case "Activity":
         const activityItem = item as ActivityData;
         return (
           <View>
             <Text
-              style={[
-                styles.activityHeader,
-                { color: isDarkMode ? "#FFF" : "#000" },
-              ]}
+              style={[styles.postText, { color: isDarkMode ? "#FFF" : "#000" }]}
             >
-              {activityItem.author.name} is {activityItem.selectedActivity.icon}{" "}
-              {activityItem.selectedActivity.name}
+              {activityItem.postContent}
             </Text>
-            {activityItem.postContent && (
-              <Text
-                style={[
-                  styles.postText,
-                  { color: isDarkMode ? "#FFF" : "#000" },
-                ]}
-              >
-                {activityItem.postContent}
-              </Text>
-            )}
-            {activityItem.artistCredit && (
-              <Text
-                style={[
-                  styles.artistCredit,
-                  { color: isDarkMode ? "#CCC" : "#555" },
-                ]}
-              >
-                (Credit: {activityItem.artistCredit})
-              </Text>
-            )}
-            {activityItem.postImages && activityItem.postImages.length > 0 && (
-              <View style={styles.postImageGrid}>
-                {activityItem.postImages.map((img, index) => (
-                  <Image
-                    key={index}
-                    source={{ uri: img.uri }}
-                    style={styles.postImage}
-                  />
-                ))}
-              </View>
-            )}
-            {activityItem.taggedFriends &&
-              activityItem.taggedFriends.length > 0 && (
-                <Text
-                  style={[
-                    styles.postTags,
-                    { color: isDarkMode ? "#CCC" : "#555" },
-                  ]}
-                >
-                  — with{" "}
-                  {activityItem.taggedFriends.map((f) => f.name).join(", ")}
-                </Text>
-              )}
-            {activityItem.selectedLocation && (
-              <Text
-                style={[
-                  styles.postLocation,
-                  { color: isDarkMode ? "#CCC" : "#555" },
-                ]}
-              >
-                at {activityItem.selectedLocation}
-              </Text>
-            )}
-            {activityItem.selectedFeeling && (
-              <Text
-                style={[
-                  styles.postFeeling,
-                  { color: isDarkMode ? "#CCC" : "#555" },
-                ]}
-              >
-                is feeling {activityItem.selectedFeeling.icon}{" "}
-                {activityItem.selectedFeeling.name}
-              </Text>
-            )}
           </View>
         );
+
       default:
         return null;
     }
-  };
-
-  const [myReaction, setMyReaction] = React.useState<typeof post.myReaction>(
-    post.myReaction || null
-  );
-
-  const handleReact = (reaction: typeof myReaction) => {
-    setMyReaction(reaction);
-    // Here you would typically send this reaction to a backend
-    console.log(`User reacted with ${reaction} to post ${post.id}`);
   };
 
   return (
@@ -249,15 +175,30 @@ const PostCard: React.FC<PostCardProps> = ({ post, isDarkMode }) => {
         { backgroundColor: isDarkMode ? "#1C1C1E" : "#FFF" },
       ]}
     >
-      {/* Post Header */}
+      {/* Header */}
       <View style={styles.cardHeader}>
         <Image source={{ uri: post.author.avatar }} style={styles.avatar} />
-        <View>
-          <Text
-            style={[styles.authorName, { color: isDarkMode ? "#FFF" : "#000" }]}
-          >
-            {post.author.name}
-          </Text>
+
+        <View style={{ flex: 1 }}>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text
+              style={[
+                styles.authorName,
+                { color: isDarkMode ? "#FFF" : "#000" },
+              ]}
+            >
+              {post.author.name}
+            </Text>
+
+            {/* Feeling Badge */}
+            {feeling && (
+              <FeelingBadge
+                feelingIcon={feeling.icon}
+                feelingName={feeling.name}
+              />
+            )}
+          </View>
+
           <View style={styles.postInfo}>
             <Text
               style={[
@@ -283,6 +224,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, isDarkMode }) => {
             </Text>
           </View>
         </View>
+
         <TouchableOpacity style={styles.moreButton}>
           <Ionicons
             name="ellipsis-horizontal"
@@ -295,7 +237,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, isDarkMode }) => {
       {/* Post Content */}
       <View style={styles.cardContent}>{renderPostContent(post)}</View>
 
-      {/* Reactions and Comments */}
+      {/* Actions */}
       <View style={styles.cardActions}>
         <ReactionButton
           reactionCounts={post.reactionCounts}

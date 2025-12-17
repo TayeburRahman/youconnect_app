@@ -1,216 +1,188 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   View,
   Text,
   TextInput,
-  ScrollView,
   TouchableOpacity,
-  Image,
-  FlatList,
-  StyleSheet, // Import StyleSheet
-  Dimensions, // Import Dimensions for responsive design
-  SafeAreaView, // Import SafeAreaView
+  ScrollView,
+  SafeAreaView,
+  StyleSheet,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../contexts/ThemeContext";
-import {
-  SearchItem,
-  SearchUserItem,
-  SearchHashtagItem,
-  SearchPostItem,
-  SearchEventItem,
-  RootTabParamList,
-} from "../types"; // Corrected type imports
-import { BottomTabScreenProps } from "@react-navigation/bottom-tabs"; // Import BottomTabScreenProps
-import { ActivityType } from "./types/types";
-import styles from "../styles/SearchScreen.styles";
+import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
+import { useNavigation } from "@react-navigation/native";
 
-const { width } = Dimensions.get("window");
+import PostCard from "../components/PostCard";
+import { RootTabParamListSearch, PostItem, SearchUserItem } from "../types"; // Ensure correct types are imported
+import demoFeed from "../demo_createpost_data.json"; // Demo data import
 
-type Props = BottomTabScreenProps<RootTabParamList, "Search">;
+type Props = BottomTabScreenProps<RootTabParamListSearch, "Search">;
+type TabKey = "All" | "People" | "Posts" | "Events" | "Activities";
 
-const SearchScreen: React.FC<Props> = () => {
+const TABS: TabKey[] = ["All", "People", "Posts", "Events", "Activities"];
+
+// Normalize the text for filtering (case insensitive)
+function normalize(text: unknown): string {
+  return String(text ?? "")
+    .toLowerCase()
+    .trim();
+}
+
+export default function SearchScreen(_: Props) {
   const { isDarkMode } = useTheme();
-  const [activeTab, setActiveTab] = useState<string>("Users");
+  const navigation = useNavigation();
+  const [activeTab, setActiveTab] = useState<TabKey>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  // Demo data for each tab
-  const demoUsers: SearchUserItem[] = [
-    {
-      id: "1",
-      username: "daily.quotes333",
-      avatarUri: "https://i.pravatar.cc/150?img=11",
-    },
-    {
-      id: "2",
-      username: "nature_lovers",
-      avatarUri: "https://i.pravatar.cc/150?img=12",
-    },
-    {
-      id: "3",
-      username: "skater_life",
-      avatarUri: "https://i.pravatar.cc/150?img=13",
-    },
-  ];
+  // Cast feed data and ensure types
+  const feed = useMemo(() => demoFeed as PostItem[], []);
 
-  const demoHashtags: SearchHashtagItem[] = [
-    { id: "1", hashtag: "#Inspiration" },
-    { id: "2", hashtag: "#Nature" },
-    { id: "3", hashtag: "#Skating" },
-  ];
+  // Separate feed by post types
+  const { posts, events, activities } = useMemo(() => {
+    const posts: PostItem[] = [];
+    const events: PostItem[] = [];
+    const activities: PostItem[] = [];
 
-  const demoPosts: SearchPostItem[] = [
-    {
-      id: "1",
-      username: "daily.quotes333",
-      caption: "When life gives you lemons...",
-      imageUri: "https://via.placeholder.com/300",
-    },
-    {
-      id: "2",
-      username: "nature_lovers",
-      caption: "Exploring the beauty of nature.",
-      imageUri: "https://via.placeholder.com/300",
-    },
-    {
-      id: "3",
-      username: "skater_life",
-      caption: "Skating into the weekend.",
-      imageUri: "https://via.placeholder.com/300",
-    },
-  ];
-
-  const demoEvents: SearchEventItem[] = [
-    {
-      id: "1",
-      eventName: "Beach Clean-up",
-      date: "May 20, 2023",
-      location: "Santa Monica Beach",
-    },
-    {
-      id: "2",
-      eventName: "Skateboard Championship",
-      date: "June 15, 2023",
-      location: "Los Angeles",
-    },
-    {
-      id: "3",
-      eventName: "Nature Walk",
-      date: "July 10, 2023",
-      location: "Yosemite National Park",
-    },
-  ];
-
-  // Function to filter results based on the active tab and search query
-  const filterResults = (data: SearchItem[]) => {
-    if (!searchQuery) return []; // Return empty if no query
-
-    return data.filter((item: any) => {
-      let searchableValue = "";
-      if ("username" in item) searchableValue = item.username;
-      else if ("hashtag" in item) searchableValue = item.hashtag;
-      else if ("eventName" in item) searchableValue = item.eventName;
-      else if ("caption" in item) searchableValue = item.caption;
-
-      return searchableValue.toLowerCase().includes(searchQuery.toLowerCase());
+    feed.forEach((item) => {
+      if (!item || typeof item !== "object") return;
+      switch ((item as any).postType) {
+        case "Post":
+          posts.push(item);
+          break;
+        case "Event":
+          events.push(item);
+          break;
+        case "Activity":
+          activities.push(item);
+          break;
+      }
     });
-  };
 
-  // Function to render content based on the active tab
-  const renderTabContent = () => {
-    const cardStyle = [
-      styles.card,
-      { backgroundColor: isDarkMode ? "#333" : "#FFF" },
-    ];
-    const cardTextStyle = { color: isDarkMode ? "#FFF" : "#000" };
+    return { posts, events, activities };
+  }, [feed]);
 
-    let dataToFilter: SearchItem[] = [];
+  // Extract unique people from feed authors
+  const people = useMemo(() => {
+    const map = new Map<string, SearchUserItem>();
+    feed.forEach((item) => {
+      const author = (item as any).author;
+      if (author?.id && !map.has(author.id)) {
+        map.set(author.id, {
+          id: String(author.id),
+          name: String(author.name ?? "Unknown"),
+          avatar: String(author.avatar ?? ""),
+        });
+      }
+    });
+    return Array.from(map.values());
+  }, [feed]);
+
+  // Select data list based on active tab
+  const baseList = useMemo(() => {
     switch (activeTab) {
-      case "Users":
-        dataToFilter = demoUsers;
-        break;
-      case "Hashtags":
-        dataToFilter = demoHashtags;
-        break;
+      case "All":
+        return feed;
+      case "People":
+        return people;
       case "Posts":
-        dataToFilter = demoPosts;
-        break;
+        return posts;
       case "Events":
-        dataToFilter = demoEvents;
-        break;
+        return events;
+      case "Activities":
+        return activities;
       default:
-        return null;
+        return [];
     }
+  }, [activeTab, feed, people, posts, events, activities]);
 
-    const filteredData = filterResults(dataToFilter);
+  // Filter list by search query
+  const filteredList = useMemo(() => {
+    const query = normalize(searchQuery);
+    if (!query) return baseList;
 
-    if (searchQuery && filteredData.length === 0) {
-      return (
-        <View style={styles.noResultsContainer}>
-          <Text
-            style={[
-              styles.noResultsText,
-              { color: isDarkMode ? "#AAA" : "#666" },
-            ]}
-          >
-            No results found for "{searchQuery}"
-          </Text>
-        </View>
+    if (activeTab === "People") {
+      return (baseList as SearchUserItem[]).filter((user) =>
+        normalize(user.name).includes(query)
       );
     }
 
-    return filteredData.map((item) => {
-      switch (activeTab) {
-        case "Users":
-          const user = item as SearchUserItem;
-          return (
-            <View key={user.id} style={cardStyle}>
-              <Image source={{ uri: user.avatarUri }} style={styles.avatar} />
-              <Text style={[styles.cardText, cardTextStyle]}>
-                {user.username}
-              </Text>
-            </View>
-          );
-        case "Hashtags":
-          const hashtag = item as SearchHashtagItem;
-          return (
-            <View key={hashtag.id} style={cardStyle}>
-              <Text style={[styles.cardText, cardTextStyle]}>
-                {hashtag.hashtag}
-              </Text>
-            </View>
-          );
-        case "Posts":
-          const post = item as SearchPostItem;
-          return (
-            <View key={post.id} style={cardStyle}>
-              <Text style={[styles.cardText, cardTextStyle]}>
-                {post.username}
-              </Text>
-              <Image source={{ uri: post.imageUri }} style={styles.cardImage} />
-              <Text style={[styles.cardText, cardTextStyle]}>
-                {post.caption}
-              </Text>
-            </View>
-          );
-        case "Events":
-          const event = item as SearchEventItem;
-          return (
-            <View key={event.id} style={cardStyle}>
-              <Text style={[styles.cardText, cardTextStyle]}>
-                {event.eventName}
-              </Text>
-              <Text style={[styles.cardText, cardTextStyle]}>{event.date}</Text>
-              <Text style={[styles.cardText, cardTextStyle]}>
-                {event.location}
-              </Text>
-            </View>
-          );
-        default:
-          return null;
-      }
+    // Filter post/event/activity by relevant fields
+    return (baseList as PostItem[]).filter((item) => {
+      const fields = [
+        (item as any)?.author?.name,
+        (item as any)?.postContent,
+        (item as any)?.eventName,
+        (item as any)?.eventDescription,
+        (item as any)?.storyText,
+        (item as any)?.selectedActivity?.name,
+        (item as any)?.selectedLocation,
+        (item as any)?.selectedFeeling?.name,
+      ];
+
+      const haystack = fields.filter(Boolean).map(normalize).join(" ");
+      return haystack.includes(query);
     });
-  };
+  }, [baseList, activeTab, searchQuery]);
+
+  // Render person row for People tab
+  const renderPersonRow = (user: SearchUserItem) => (
+    <TouchableOpacity
+      key={user.id}
+      style={[
+        styles.personRow,
+        { backgroundColor: isDarkMode ? "#1E1E1E" : "#FFF" },
+      ]}
+      activeOpacity={0.7}
+      onPress={() =>
+        navigation.navigate("UserProfile", {
+          // @ts-ignore
+          userId: user.id,
+          userName: user.name,
+          userAvatar: user.avatar,
+        })
+      }
+    >
+      <View style={styles.avatarPlaceholder}>
+        {user.avatar ? (
+          <Ionicons name="person-circle" size={48} color="#888" />
+        ) : (
+          <Ionicons name="person-circle-outline" size={48} color="#888" />
+        )}
+      </View>
+      <View style={styles.personInfo}>
+        <Text
+          style={[styles.personName, { color: isDarkMode ? "#FFF" : "#000" }]}
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
+          {user.name}
+        </Text>
+        <Text
+          style={[
+            styles.personUsername,
+            { color: isDarkMode ? "#AAA" : "#555" },
+          ]}
+        >
+          @{user.username.toLowerCase().replace(/\s/g, "")}
+        </Text>
+      </View>
+      <TouchableOpacity
+        style={[
+          styles.friendRequestBtn,
+          { backgroundColor: isDarkMode ? "#3B82F6" : "#007AFF" },
+        ]}
+        onPress={() => alert(`Friend request sent to ${user.name}`)}
+      >
+        <Text style={styles.friendRequestText}>Add Friend</Text>
+      </TouchableOpacity>
+    </TouchableOpacity>
+  );
+
+  // Render Post/Event/Activity cards
+  const renderPostRow = (item: PostItem) => (
+    <PostCard key={item.id} post={item} isDarkMode={isDarkMode} />
+  );
 
   return (
     <SafeAreaView
@@ -219,8 +191,8 @@ const SearchScreen: React.FC<Props> = () => {
         { backgroundColor: isDarkMode ? "#0A0A0F" : "#FFFFFF" },
       ]}
     >
-      <View style={[styles.container]}>
-        {/* Search Bar */}
+      <View style={styles.container}>
+        {/* Search Input */}
         <View
           style={[
             styles.searchContainer,
@@ -235,89 +207,152 @@ const SearchScreen: React.FC<Props> = () => {
           />
           <TextInput
             placeholder="Search here"
+            placeholderTextColor="#888"
             style={[
               styles.searchInput,
               { color: isDarkMode ? "#FFF" : "#000" },
             ]}
-            placeholderTextColor="#888"
             value={searchQuery}
             onChangeText={setSearchQuery}
+            clearButtonMode="while-editing"
+            autoCorrect={false}
+            autoCapitalize="none"
           />
         </View>
 
-        {/* Suggestions Layer */}
-        {searchQuery.length > 0 && (
-          <View
-            style={[
-              styles.suggestionsContainer,
-              { backgroundColor: isDarkMode ? "#333" : "#FFF" },
-            ]}
-          >
-            <FlatList<SearchItem>
-              data={
-                activeTab === "Users"
-                  ? demoUsers
-                  : activeTab === "Hashtags"
-                  ? demoHashtags
-                  : activeTab === "Posts"
-                  ? demoPosts
-                  : demoEvents
-              }
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={({ item }: any) => {
-                const label =
-                  "username" in item
-                    ? item.username
-                    : "hashtag" in item
-                    ? item.hashtag
-                    : "eventName" in item
-                    ? item.eventName
-                    : "caption" in item
-                    ? item.caption
-                    : "";
-
-                return (
-                  <TouchableOpacity
-                    style={styles.suggestionItem}
-                    onPress={() => setSearchQuery(label)}
-                  >
-                    <Text
-                      style={[
-                        styles.suggestionText,
-                        { color: isDarkMode ? "#FFF" : "#000" },
-                      ]}
-                    >
-                      {label}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              }}
-            />
-          </View>
-        )}
-
         {/* Tabs */}
         <View style={styles.tabsContainer}>
-          {["Users", "Hashtags", "Posts", "Events"].map((tab) => (
-            <TouchableOpacity key={tab} onPress={() => setActiveTab(tab)}>
+          {TABS.map((tab) => (
+            <TouchableOpacity
+              key={tab}
+              onPress={() => setActiveTab(tab)}
+              activeOpacity={0.7}
+              style={styles.tabButton}
+            >
               <Text
                 style={[
                   styles.tabText,
-                  { color: isDarkMode ? "#AAA" : "#888" }, // Adjusted for dark mode
+                  { color: isDarkMode ? "#AAA" : "#888" },
                   activeTab === tab && styles.activeTabText,
                 ]}
               >
                 {tab}
               </Text>
+              {activeTab === tab && (
+                <View
+                  style={[
+                    styles.activeTabUnderline,
+                    { backgroundColor: isDarkMode ? "#FFF" : "#000" },
+                  ]}
+                />
+              )}
             </TouchableOpacity>
           ))}
         </View>
 
-        {/* Content for the active tab */}
-        <ScrollView style={styles.content}>{renderTabContent()}</ScrollView>
+        {/* ScrollView List */}
+        <ScrollView
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          {filteredList.length === 0 ? (
+            <View style={styles.noResultsContainer}>
+              <Text
+                style={[
+                  styles.noResultsText,
+                  { color: isDarkMode ? "#AAA" : "#666" },
+                ]}
+              >
+                {searchQuery
+                  ? `No results found for "${searchQuery}"`
+                  : "No items to show."}
+              </Text>
+            </View>
+          ) : activeTab === "People" ? (
+            (filteredList as SearchUserItem[]).map(renderPersonRow)
+          ) : (
+            (filteredList as PostItem[]).map(renderPostRow)
+          )}
+        </ScrollView>
       </View>
     </SafeAreaView>
   );
-};
+}
 
-export default SearchScreen;
+const styles = StyleSheet.create({
+  safeArea: { flex: 1 },
+  container: { flex: 1, paddingHorizontal: 12 },
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginVertical: 12,
+  },
+  searchIcon: { marginRight: 8 },
+  searchInput: { flex: 1, fontSize: 16, height: 40 },
+  tabsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginBottom: 12,
+  },
+  tabButton: { paddingBottom: 6, alignItems: "center" },
+  tabText: { fontSize: 16, fontWeight: "600" },
+  activeTabText: { fontWeight: "700" },
+  activeTabUnderline: {
+    height: 2,
+    width: "100%",
+    marginTop: 4,
+    borderRadius: 2,
+  },
+  content: { paddingBottom: 20 },
+  noResultsContainer: { marginTop: 40, alignItems: "center" },
+  noResultsText: { fontSize: 16, fontWeight: "600" },
+
+  // People row styles
+  personRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+    padding: 12,
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
+  },
+  avatarPlaceholder: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "#ccc",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  personInfo: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  personName: {
+    fontSize: 18,
+    fontWeight: "600",
+  },
+  personUsername: {
+    fontSize: 14,
+    fontWeight: "400",
+    marginTop: 2,
+  },
+  friendRequestBtn: {
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+  },
+  friendRequestText: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: 14,
+  },
+});

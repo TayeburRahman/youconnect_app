@@ -1,96 +1,159 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, Modal, Animated, StyleSheet, Dimensions, PanResponder } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { ReactionButtonProps } from '../types';
+import React, { useState, useRef, useCallback } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Modal,
+  Animated,
+  StyleSheet,
+  Dimensions,
+  Platform,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { ReactionButtonProps } from "../types";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 const reactions = [
-  { name: 'like', icon: 'thumbs-up', color: '#007AFF' },
-  { name: 'love', icon: 'heart', color: '#FF3B30' },
-  { name: 'haha', icon: 'happy', color: '#FFD60A' },
-  { name: 'sad', icon: 'sad', color: '#5AC8FA' },
-  { name: 'angry', icon: 'sad', color: '#FF2D55' }, // Using 'sad' icon for angry as well, no direct angry icon in Ionicons
-];
+  { name: "like", icon: "thumbs-up", color: "#1877F2" },
+  { name: "love", icon: "heart", color: "#E0245E" },
+  { name: "haha", icon: "happy", color: "#F7B125" },
+  { name: "sad", icon: "sad-outline", color: "#FFB347" },
+  { name: "angry", icon: "flame", color: "#E94135" },
+] as const;
 
-const ReactionButton: React.FC<ReactionButtonProps> = ({ reactionCounts, myReaction, onReact, isDarkMode }) => {
+type ReactionName = (typeof reactions)[number]["name"];
+
+const ReactionButton: React.FC<ReactionButtonProps> = ({
+  reactionCounts,
+  myReaction,
+  onReact,
+  isDarkMode,
+}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const scaleAnim = useRef(new Animated.Value(0)).current;
 
-  const showReactions = () => {
+  // Show modal with spring scale animation
+  const showReactions = useCallback(() => {
     setModalVisible(true);
     Animated.spring(scaleAnim, {
       toValue: 1,
-      useNativeDriver: true,
       friction: 7,
+      useNativeDriver: true,
     }).start();
-  };
+  }, [scaleAnim]);
 
-  const hideReactions = () => {
+  // Hide modal with fade-out scale down
+  const hideReactions = useCallback(() => {
     Animated.timing(scaleAnim, {
       toValue: 0,
       duration: 150,
       useNativeDriver: true,
     }).start(() => setModalVisible(false));
-  };
+  }, [scaleAnim]);
 
-  const handleReactionPress = (reactionName: typeof myReaction) => {
-    onReact(reactionName === myReaction ? null : reactionName); // Toggle reaction
-    hideReactions();
-  };
+  // Toggle reaction or remove if same tapped again
+  const handleReactionPress = useCallback(
+    (reactionName: ReactionName | null) => {
+      if (reactionName === undefined) return;
 
+      onReact(reactionName === myReaction ? null : reactionName);
+      hideReactions();
+    },
+    [myReaction, onReact, hideReactions]
+  );
+
+  // Render all reaction icons inside the modal with scaling animation
   const renderReactionIcons = () => (
-    <Animated.View style={[
-      styles.reactionsContainer,
-      { transform: [{ scale: scaleAnim }] },
-      isDarkMode ? styles.reactionsContainerDark : styles.reactionsContainerLight,
-    ]}>
-      {reactions.map((reaction) => (
-        <TouchableOpacity
-          key={reaction.name}
-          onPress={() => handleReactionPress(reaction.name as any)}
-          style={styles.reactionIconWrapper}
-        >
-          <Ionicons
-            name={reaction.icon as any}
-            size={24}
-            color={reaction.color}
-            style={reaction.name === myReaction ? styles.selectedReaction : {}}
-          />
-        </TouchableOpacity>
-      ))}
+    <Animated.View
+      style={[
+        styles.reactionsContainer,
+        { transform: [{ scale: scaleAnim }] },
+        isDarkMode
+          ? styles.reactionsContainerDark
+          : styles.reactionsContainerLight,
+      ]}
+    >
+      {reactions.map((reaction) => {
+        const isSelected = reaction.name === myReaction;
+
+        return (
+          <TouchableOpacity
+            key={reaction.name}
+            activeOpacity={0.7}
+            onPress={() => handleReactionPress(reaction.name)}
+            style={[
+              styles.reactionIconWrapper,
+              isSelected && styles.selectedReactionWrapper,
+            ]}
+          >
+            <Ionicons
+              name={reaction.icon as any}
+              size={28}
+              color={reaction.color}
+              style={
+                isSelected ? styles.selectedReactionIcon : styles.reactionIcon
+              }
+            />
+          </TouchableOpacity>
+        );
+      })}
     </Animated.View>
   );
 
-  const currentReaction = reactions.find(r => r.name === myReaction);
-  const defaultIcon = myReaction ? currentReaction?.icon : 'thumbs-up';
-  const defaultColor = myReaction ? currentReaction?.color : (isDarkMode ? '#AAA' : '#888');
-  const defaultText = myReaction ? myReaction.charAt(0).toUpperCase() + myReaction.slice(1) : 'Like';
+  // Default reaction info when none selected
+  const currentReaction = reactions.find((r) => r.name === myReaction);
+  const defaultIcon = myReaction ? currentReaction?.icon : "thumbs-up";
+  const defaultColor = myReaction
+    ? currentReaction?.color
+    : isDarkMode
+      ? "#AAA"
+      : "#888";
+  const defaultText = myReaction
+    ? myReaction.charAt(0).toUpperCase() + myReaction.slice(1)
+    : "Like";
 
-  const totalReactions = Object.values(reactionCounts).reduce((sum, count) => sum + count, 0);
+  // Total reactions count (sum all counts)
+  const totalReactions = Object.values(reactionCounts).reduce(
+    (sum, count) => sum + count,
+    0
+  );
 
   return (
     <View>
+      {/* Reaction button: tap to toggle like/unlike, long press to open modal */}
       <TouchableOpacity
-        onPress={myReaction ? () => handleReactionPress(null) : showReactions} // Tap to unlike, long press to show options
+        onPress={myReaction ? () => handleReactionPress(null) : showReactions}
         onLongPress={showReactions}
         delayLongPress={200}
+        activeOpacity={0.7}
         style={styles.buttonContainer}
       >
         <Ionicons name={defaultIcon as any} size={20} color={defaultColor} />
-        <Text style={[styles.buttonText, { color: isDarkMode ? '#FFF' : '#000' }]}>
+        <Text
+          style={[styles.buttonText, { color: isDarkMode ? "#FFF" : "#000" }]}
+        >
           {defaultText}
         </Text>
         {totalReactions > 0 && (
-          <Text style={[styles.reactionCount, { color: isDarkMode ? '#AAA' : '#666' }]}>
-            {totalReactions}
-          </Text>
+          <View style={styles.countBadge}>
+            <Text
+              style={[
+                styles.reactionCount,
+                { color: isDarkMode ? "#FFF" : "#000" },
+              ]}
+            >
+              {totalReactions}
+            </Text>
+          </View>
         )}
       </TouchableOpacity>
 
+      {/* Modal for reactions selection */}
       <Modal
         transparent={true}
         visible={modalVisible}
+        animationType="fade"
         onRequestClose={hideReactions}
       >
         <TouchableOpacity
@@ -109,56 +172,78 @@ const ReactionButton: React.FC<ReactionButtonProps> = ({ reactionCounts, myReact
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 20,
-    backgroundColor: 'transparent',
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 24,
+    backgroundColor: "transparent",
   },
   buttonText: {
-    marginLeft: 5,
-    fontWeight: '600',
+    marginLeft: 6,
+    fontWeight: "600",
+    fontSize: 16,
+  },
+  countBadge: {
+    borderRadius: 10,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    minWidth: 24,
+    alignItems: "center",
+    justifyContent: "center",
   },
   reactionCount: {
-    marginLeft: 8,
     fontSize: 12,
+    fontWeight: "700",
   },
   modalBackdrop: {
     flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.1)',
+    justifyContent: "flex-end",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.25)",
+    paddingBottom: Platform.OS === "ios" ? 40 : 20,
   },
   reactionsModalWrapper: {
-    position: 'absolute',
-    bottom: 80, // Adjust based on bottom tab navigator height
+    backgroundColor: "transparent",
+    marginBottom: 10,
   },
   reactionsContainer: {
-    flexDirection: 'row',
-    backgroundColor: '#FFF',
-    borderRadius: 30,
-    padding: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    backgroundColor: "#FFF",
+    borderRadius: 40,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 5,
+    elevation: 7,
   },
   reactionsContainerLight: {
-    backgroundColor: '#FFF',
+    backgroundColor: "#FFF",
   },
   reactionsContainerDark: {
-    backgroundColor: '#333',
+    backgroundColor: "#222",
   },
   reactionIconWrapper: {
-    paddingHorizontal: 5,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 30,
   },
-  selectedReaction: {
-    borderWidth: 1,
-    borderColor: 'white', // Highlight selected reaction
-    borderRadius: 15,
-    padding: 2,
+  selectedReactionWrapper: {
+    backgroundColor: "#D1D1D6", // iOS system gray 4, softer highlight
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3,
+    elevation: 5,
+  },
+  reactionIcon: {
+    backgroundColor: "transparent",
+  },
+  selectedReactionIcon: {
+    transform: [{ scale: 1.3 }],
   },
 });
 

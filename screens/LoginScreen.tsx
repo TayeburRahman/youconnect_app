@@ -167,8 +167,16 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
               >
                 or continue with
               </Text>
-              <SocialButton provider="google" onPress={() => {}} />
-              <SocialButton provider="apple" onPress={() => {}} />
+              <SocialButton
+                style={styles.socialButton}
+                provider="google"
+                onPress={() => {}}
+              />
+              <SocialButton
+                style={styles.socialButton}
+                provider="apple"
+                onPress={() => {}}
+              />
             </View>
 
             {/* SIGN UP */}

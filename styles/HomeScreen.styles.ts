@@ -5,7 +5,7 @@ const { width } = Dimensions.get("window");
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // padding: 16, // Padding will be handled by individual cards or FlatList contentContainerStyle
+        padding: 16,
     },
     // Styles for PostCard
     card: {
@@ -65,6 +65,12 @@ const styles = StyleSheet.create({
         fontStyle: "italic",
         marginBottom: 5,
     },
+    singlePostImage: {
+        width: "100%",
+        height: 250,
+        borderRadius: 10,
+        marginVertical: 10,
+    },
     postImageGrid: {
         flexDirection: "row",
         flexWrap: "wrap",
@@ -72,11 +78,11 @@ const styles = StyleSheet.create({
         marginVertical: 10,
     },
     postImage: {
-        width: (width - 32 - 24) / 3 - 5, // (width - horizontal_margin - padding) / 3 - space_between_images
+        width: (width - 32 - 24) / 3 - 5,
         height: (width - 32 - 24) / 3 - 5,
         borderRadius: 8,
         margin: 2.5,
-        backgroundColor: '#E0E0E0', // Placeholder background
+        backgroundColor: "#E0E0E0",
     },
     postTags: {
         fontSize: 12,
@@ -85,8 +91,8 @@ const styles = StyleSheet.create({
     postLocation: {
         fontSize: 12,
         marginTop: 5,
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
     },
     eventTitle: {
         fontSize: 18,
@@ -102,7 +108,7 @@ const styles = StyleSheet.create({
         height: 200,
         borderRadius: 10,
         marginVertical: 10,
-        backgroundColor: '#E0E0E0', // Placeholder background
+        backgroundColor: "#E0E0E0",
     },
     eventDateTime: {
         fontSize: 12,
@@ -111,15 +117,15 @@ const styles = StyleSheet.create({
     eventLocation: {
         fontSize: 12,
         marginBottom: 5,
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
     },
     storyImage: {
         width: "100%",
         height: 300,
         borderRadius: 10,
         marginVertical: 10,
-        backgroundColor: '#E0E0E0', // Placeholder background
+        backgroundColor: "#E0E0E0",
     },
     storyText: {
         fontSize: 14,
@@ -141,7 +147,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingVertical: 8,
         borderTopWidth: 1,
-        borderTopColor: "rgba(0,0,0,0.1)", // Light border
+        borderTopColor: "rgba(0,0,0,0.1)",
     },
     commentButton: {
         flexDirection: "row",
@@ -153,20 +159,9 @@ const styles = StyleSheet.create({
         marginLeft: 5,
         fontSize: 12,
     },
-    // Existing styles (cleaned up or integrated)
-    themeToggle: {
-        flexDirection: "row",
-        justifyContent: "flex-end",
-        alignItems: "center",
-        marginBottom: 20,
-    },
-    toggleText: {
-        fontSize: 16,
-        marginRight: 8,
-    },
     connectedContainer: {
         marginBottom: 20,
-        paddingHorizontal: 16, // Added padding
+        paddingHorizontal: 16,
     },
     connectedText: {
         fontSize: 18,
@@ -175,18 +170,17 @@ const styles = StyleSheet.create({
     },
     profileRow: {
         flexDirection: "row",
-        // Removed justifyContent: "space-between" as FlatList handles spacing
     },
     profileImage: {
         width: 60,
         height: 60,
         borderRadius: 30,
         borderWidth: 2,
-        borderColor: "#756b72ff", // Border for profile images
+        borderColor: "#756b72ff",
     },
     postListContainer: {
-        paddingBottom: 20, // To ensure content at the bottom is visible
-    }
+        paddingBottom: 20,
+    },
 });
 
 export default styles;
