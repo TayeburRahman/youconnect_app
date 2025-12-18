@@ -68,6 +68,7 @@ export default function SearchScreen(_: Props) {
     feed.forEach((item) => {
       const author = (item as any).author;
       if (author?.id && !map.has(author.id)) {
+        // @ts-ignore
         map.set(author.id, {
           id: String(author.id),
           name: String(author.name ?? "Unknown"),
@@ -135,8 +136,8 @@ export default function SearchScreen(_: Props) {
       ]}
       activeOpacity={0.7}
       onPress={() =>
+        // @ts-ignore
         navigation.navigate("UserProfile", {
-          // @ts-ignore
           userId: user.id,
           userName: user.name,
           userAvatar: user.avatar,
@@ -164,7 +165,7 @@ export default function SearchScreen(_: Props) {
             { color: isDarkMode ? "#AAA" : "#555" },
           ]}
         >
-          @{user.username.toLowerCase().replace(/\s/g, "")}
+          @{user?.name?.toLowerCase().replace(/\s/g, "")}
         </Text>
       </View>
       <TouchableOpacity
